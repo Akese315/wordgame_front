@@ -3,6 +3,7 @@ import App from './App.vue'
 import {createRouter,createWebHistory} from 'vue-router';
 import Home from './views/Home.vue'
 import Game from './views/Game.vue'
+import Lobby from './views/Lobby.vue'
 import Notfound from './views/Notfound.vue'
 
 
@@ -11,7 +12,8 @@ import Notfound from './views/Notfound.vue'
 const routes = [
     { path: '/', component: Home },
     { path: '/:pathMatch(.*)*', component: Notfound },
-    { path: '/game', component: Game }
+    { path: '/game', component: Game },
+    { path: '/lobby', component: Lobby }
   ];
 
 const router = createRouter(

@@ -22,5 +22,11 @@ font-family: 'Chakra Petch', sans-serif;
 }
 body{
  margin : 0;
+ height : 100%;
 }
+html
+{
+  height : 100%;
+}
+
 </style>
