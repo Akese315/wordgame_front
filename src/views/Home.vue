@@ -7,38 +7,60 @@ import axios from 'axios';
 
 export default {
     name: "wg_home",
+
     components :
     {
         WGinput,
         WGbutton,
-        WGerror : WGerror
+        WGerror
     },
+
+    inject:["pseudo","userHash"],
+
     data: function(){
     return{
         secondStep : false,
         pseudo_value : "",
         error : "",
-        bounce : false
+        bounce : false,
+        
     }},
+    created() {
+        console.log(this.userHash) // injected value
+    },
+
     methods:
     {
-        createGame()
+        async createGame()
         {   
-            var self = this;
+            alert(this.$userHash)
+            var object = await axios.post(`${API_URL}/users`, {
+                name: this.pseudo, 
+                userHash: this.userHash           
+            });
+
+            this.$userHash =  object.data.userHash;
+            alert(this.$userHash)
+            alert(object.data.userHash)
+            this.$router.push({ path: '/lobby' })
+            /* var self = this;
             axios.post(`${API_URL}/users`, {
-                name: this.pseudo_value                
+                name: self.pseudo, 
+                userHash: self.userHash           
             }).then((response) => {
                 
                 if(response.status == 200)
                 {              
                     self.error = response.data.message;
+                    self.userHashbis  = response.data.userHash;
+                        
                     self.bounce = true;
                     setTimeout(() => {self.bounce = false;}, 1000);
-                    self.$router.push({ path: '/game' })
+                    self.$router.push({ path: '/lobby' })
                 }                
             }).catch(function(error)
             {            
-                
+                self.error ="";
                 if(typeof error.response.data != 'undefined')
                 {   
                     for(var i =0; i<error.response.data.error.length;i++)
@@ -54,7 +76,7 @@ export default {
                     self.bounce = true;
                     setTimeout(() => {self.bounce = false;}, 1000);
                 }                           
-            })
+            })*/
         }
     }
 }
@@ -66,7 +88,7 @@ export default {
             <h1>Welcome to the WordGame</h1>
             <h2>ワードゲームへようこそう</h2>     
                <form @submit.prevent="createGame" >
-                <WGinput v-model="this.pseudo_value" wg_placeholder="Pseudo"/>                
+                <WGinput v-model="this.pseudo" wg_placeholder="Pseudo"/>                
                 <WGbutton wg_value ='Create'/>  
                 <WGerror v-bind:WG_value="this.error" v-bind:Bounce="this.bounce"/>
                 </form>
@@ -85,7 +107,6 @@ export default {
         height : min-content;
         padding : 20px;
         border-radius:30px; 
-        box-shadow: black;
         box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
     }
 

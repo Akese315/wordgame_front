@@ -2,7 +2,16 @@
 <script>
 
 export default {
-  name: 'App'
+  name: 'App',
+  provide()
+  {
+    return
+    {
+    pseudo: "HikariTo",
+    userHash: "qzdqzdqz534354"
+    }
+  }
+  
 }
 </script>
 
