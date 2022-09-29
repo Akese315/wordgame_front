@@ -1,16 +1,45 @@
 <script>
+import { ref, computed} from '@vue/reactivity';
 export default {
+    
     name : "WG_input",
     props:
     {
         wg_placeholder : String,
         modelValue : String      
     },
-    data: function(){
-    return{
-        focused : false,
-        wg_value : this.modelValue
-    }},
+    emits: ['update:modelValue'],
+    setup(props, { emit })
+    {
+        const focused = ref(false)
+        const wg_value = ref(props.modelValue)
+
+        const update_wg_value = computed(
+            {
+                get()
+                {
+                    return wg_value.value;
+                },
+                set(value)
+                {
+                    wg_value.value = value
+                    emit('update:modelValue', wg_value.value); 
+                }
+            }
+        )
+
+        console.log(wg_value)
+        if(wg_value.value != "")
+        {
+            focused.value = true;
+        }
+
+        return{
+            focused,
+            wg_value,
+            update_wg_value
+        }
+    },
     methods:
     {
         onFocus()
@@ -24,22 +53,15 @@ export default {
                 this.focused = false;
             }            
         }
-    },
-    watch:
-    {
-        wg_value: function()
-        {
-            this.$emit('update:modelValue', this.wg_value);
-        }
-    },
-    emits: ['update:modelValue']
+    }
+    
 }
 </script>
 
 <template>
     <div id="input_wg">        
         
-        <input id="input" v-model="wg_value" type="text" @focus="onFocus" @blur="onBlur" required/>
+        <input id="input" v-model="update_wg_value" type="text" @focus="onFocus" @blur="onBlur" required/>
         <label v-bind:class="{input_selected :focused}" id="placeholder">{{wg_placeholder}}</label>
         
     </div>

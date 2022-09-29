@@ -1,16 +1,23 @@
 
 <script>
+import { reactive } from '@vue/reactivity';
+import { provide} from 'vue';
 
-export default {
+
+export default 
+{
   name: 'App',
-  provide()
+  setup()
   {
-    return
-    {
-    pseudo: "HikariTo",
-    userHash: "qzdqzdqz534354"
+    const user = reactive({pseudo :"none", hash:"none"})
+
+    provide("user", user);
+    return    {
+      user : user
     }
-  }
+  },
+
+
   
 }
 </script>

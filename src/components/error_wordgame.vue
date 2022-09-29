@@ -21,6 +21,7 @@ label
 {   
     color : #a83232;
     font-weight: bold;
+    text-align: center;
 }
 
 .actived

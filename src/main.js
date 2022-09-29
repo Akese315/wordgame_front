@@ -12,8 +12,9 @@ import Notfound from './views/Notfound.vue'
 const routes = [
     { path: '/', component: Home },
     { path: '/:pathMatch(.*)*', component: Notfound },
-    { path: '/game', component: Game },
-    { path: '/lobby', component: Lobby }
+    { path: '/game/:id', component: Game },
+    { path: '/lobby/:id', component: Lobby }
+    
   ];
 
 const router = createRouter(
@@ -23,6 +24,7 @@ const router = createRouter(
     });
 
 const app = createApp(App);
+app.config.unwrapInjectedRef = true;
 
 app.use(router);
 app.mount('#app')

@@ -2,10 +2,13 @@
 import WGinput from '../components/input_wordgame.vue'
 import WGbutton from '../components/button_wordgame.vue'
 import WGerror from '../components/error_wordgame.vue'
-import { API_URL } from '../constants';
-import axios from 'axios';
+import {request} from '../scripts/request.js'
+import { inject} from 'vue'
+import { ref } from '@vue/reactivity';
+import { useRouter } from 'vue-router'
 
 export default {
+
     name: "wg_home",
 
     components :
@@ -14,69 +17,62 @@ export default {
         WGbutton,
         WGerror
     },
-
-    inject:["pseudo","userHash"],
-
-    data: function(){
-    return{
-        secondStep : false,
-        pseudo_value : "",
-        error : "",
-        bounce : false,
-        
-    }},
-    created() {
-        console.log(this.userHash) // injected value
-    },
-
-    methods:
+    setup()
     {
-        async createGame()
-        {   
-            alert(this.$userHash)
-            var object = await axios.post(`${API_URL}/users`, {
-                name: this.pseudo, 
-                userHash: this.userHash           
-            });
+        //variables
+        const pseudoInput = ref("");
+        const errorInput = ref("");
+        const bounce = ref(false);
+        const user = inject("user");
+        const router = useRouter();
 
-            this.$userHash =  object.data.userHash;
-            alert(this.$userHash)
-            alert(object.data.userHash)
-            this.$router.push({ path: '/lobby' })
-            /* var self = this;
-            axios.post(`${API_URL}/users`, {
-                name: self.pseudo, 
-                userHash: self.userHash           
-            }).then((response) => {
-                
-                if(response.status == 200)
-                {              
-                    self.error = response.data.message;
-                    self.userHashbis  = response.data.userHash;
-                        
-                    self.bounce = true;
-                    setTimeout(() => {self.bounce = false;}, 1000);
-                    self.$router.push({ path: '/lobby' })
-                }                
-            }).catch(function(error)
-            {            
-                self.error ="";
-                if(typeof error.response.data != 'undefined')
-                {   
-                    for(var i =0; i<error.response.data.error.length;i++)
-                    {
-                        self.error += error.response.data.error[i]+" ";
-                    }                    
-                    self.bounce = true;
-                    setTimeout(() => {self.bounce = false;}, 1000);
-                }
-                else
-                {
-                    self.error = error.message;
-                    self.bounce = true;
-                    setTimeout(() => {self.bounce = false;}, 1000);
-                }                           
-            })*/
+        //functions
+        const ErrorBounceAnimation = ()=>
+        {
+            bounce.value = true;
+            setTimeout(() => {bounce.value = false;}, 1000); 
+        }
+
+        const RejectError = (error)=>
+        {   
+            errorInput.value = error;
+            ErrorBounceAnimation();
+        }
+
+        const redirectToLobby = (response)=>
+        {   
+            ErrorBounceAnimation();
+            router.push({ path: '/lobby/'+response.token})
+        }
+
+        const createGame = (response)=>
+        {
+            user.pseudo = response.pseudo;
+            user.hash = response.userHash;
+            errorInput.value = response.message;
+            ErrorBounceAnimation();
+            request('/games', {userHash : user.hash}, redirectToLobby, RejectError)    
+        }        
+
+        const createUser = ()=>
+        {   
+            request('/users', {name : pseudoInput.value, userHash : user.hash}, createGame, RejectError);            
+        }
+        
+
+        // -> les fonctions sont rangés par ordres d'utilisations
+        
+    
+        return{
+            pseudoInput,
+            errorInput,
+            bounce,
+            user,
+            router,
+            ErrorBounceAnimation,
+            createUser,
+            createGame,
+            redirectToLobby
         }
     }
 }
@@ -86,11 +82,11 @@ export default {
     <div id ="background">
         <div id="main_card">
             <h1>Welcome to the WordGame</h1>
-            <h2>ワードゲームへようこそう</h2>     
-               <form @submit.prevent="createGame" >
-                <WGinput v-model="this.pseudo" wg_placeholder="Pseudo"/>                
+            <h2>ワードゲームへようこそ  </h2>     
+               <form @submit.prevent="createUser" >
+                <WGinput v-model="this.pseudoInput" wg_placeholder="Pseudo"/>                
                 <WGbutton wg_value ='Create'/>  
-                <WGerror v-bind:WG_value="this.error" v-bind:Bounce="this.bounce"/>
+                <WGerror v-bind:WG_value="this.errorInput" v-bind:Bounce="this.bounce"/>
                 </form>
             
         </div>
@@ -155,6 +151,4 @@ export default {
         align-items: center;
         
     }
-
-
 </style>
