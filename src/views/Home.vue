@@ -2,10 +2,9 @@
 import WGinput from '../components/input_wordgame.vue'
 import WGbutton from '../components/button_wordgame.vue'
 import WGerror from '../components/error_wordgame.vue'
-import {request} from '../scripts/request.js'
 import { inject} from 'vue'
 import { ref } from '@vue/reactivity';
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 
 export default {
 
@@ -24,8 +23,11 @@ export default {
         const errorInput = ref("");
         const bounce = ref(false);
         const user = inject("user");
+        const game = inject("game")
+        const WebSocket = inject("WebSocket")
         const router = useRouter();
-
+        const route = useRoute();        
+        game.gameHash = route.query.game;
         //functions
         const ErrorBounceAnimation = ()=>
         {
@@ -39,26 +41,59 @@ export default {
             ErrorBounceAnimation();
         }
 
-        const redirectToLobby = (response)=>
+        const redirectToLobby = ()=>
         {   
+            navigator.clipboard.writeText("http://localhost:8080?game="+game.gameHash);
+            console.log("joined")            
+            router.push({ path: '/lobby'})
+        }
+
+        const setGameHash =(response)=>
+        {
+            errorInput.value = response.message;
+            game.gameHash = response.data.gameHash
+            console.log(response)
             ErrorBounceAnimation();
-            router.push({ path: '/lobby/'+response.token})
+            redirectToLobby();
+        }
+
+        const joinGame = ()=>
+        {
+            WebSocket.sendRequest("join",{userHash : user.hash, gameHash : game.gameHash},redirectToLobby,RejectError)
+        }
+
+        const createConnection = ()=>
+        {
+            WebSocket.open(null,RejectError);
         }
 
         const createGame = (response)=>
         {
-            user.pseudo = response.pseudo;
-            user.hash = response.userHash;
+            user.pseudo = response.data.pseudo;
+            user.hash = response.data.userHash;
             errorInput.value = response.message;
+            console.log(response)
             ErrorBounceAnimation();
-            request('/games', {userHash : user.hash}, redirectToLobby, RejectError)    
+            if(typeof(game.gameHash) === "undefined" )
+            {
+                console.log("creating game...")
+                WebSocket.sendRequest("game",{userHash : user.hash}, setGameHash, RejectError);            
+            }
+            else
+            {
+                console.log("joining...")
+                joinGame()
+            }
+           
         }        
 
         const createUser = ()=>
         {   
-            request('/users', {name : pseudoInput.value, userHash : user.hash}, createGame, RejectError);            
+            WebSocket.sendRequest("user",{name : pseudoInput.value, userHash : user.hash},
+            createGame, RejectError)                   
         }
         
+        createConnection();
 
         // -> les fonctions sont rangés par ordres d'utilisations
         
@@ -69,10 +104,13 @@ export default {
             bounce,
             user,
             router,
+            route,
             ErrorBounceAnimation,
             createUser,
             createGame,
-            redirectToLobby
+            redirectToLobby,
+            createConnection,
+            setGameHash
         }
     }
 }
@@ -136,7 +174,7 @@ export default {
         position : absolute;
         width: 100%;
         height: 100%;
-        background-image: url('https://francejapon.fr/wp-content/uploads/2015/12/insolite-japon-des-gifs-animes-representant-le-quotidien-des-japonais-2-1.gif');
+        background-image: url('../assets/japan-pixel.gif');
         background-size: cover;         
         display :flex;
         justify-content: center;         

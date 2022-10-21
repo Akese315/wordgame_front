@@ -27,8 +27,6 @@ export default {
                 }
             }
         )
-
-        console.log(wg_value)
         if(wg_value.value != "")
         {
             focused.value = true;

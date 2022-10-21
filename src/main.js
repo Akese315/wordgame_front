@@ -12,8 +12,8 @@ import Notfound from './views/Notfound.vue'
 const routes = [
     { path: '/', component: Home },
     { path: '/:pathMatch(.*)*', component: Notfound },
-    { path: '/game/:id', component: Game },
-    { path: '/lobby/:id', component: Lobby }
+    { path: '/game', component: Game },
+    { path: '/lobby', component: Lobby }
     
   ];
 
