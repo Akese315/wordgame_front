@@ -20,8 +20,6 @@
         {
             const playerList = toRef(props, "WG_player_list");
             const ringAudio = inject("ringAudio")
-            const WebSocket = inject("WebSocket")
-            const game = inject("game")
             const player = new Audio();
             player.src = ringAudio;
             
@@ -31,21 +29,11 @@
                 player.play()
             }
 
-            const getPlayer = (playerList)=>
-            {
-               playerList.value = playerList;
-               console.log(playerList)
-            }
-
-            WebSocket.listenGame(game.gameHash, getPlayer);
 
             return{
                 player,
                 playerList,
-                WebSocket,
-                game,
-                ring,
-                getPlayer
+                ring
             }
         },
         watch:

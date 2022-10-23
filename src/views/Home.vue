@@ -24,10 +24,12 @@ export default {
         const bounce = ref(false);
         const user = inject("user");
         const game = inject("game")
-        const WebSocket = inject("WebSocket")
+        const backApp = inject("backApp")
         const router = useRouter();
         const route = useRoute();        
         game.gameHash = route.query.game;
+
+        console.log(backApp)
         //functions
         const ErrorBounceAnimation = ()=>
         {
@@ -43,6 +45,7 @@ export default {
 
         const redirectToLobby = ()=>
         {   
+            backApp.listenGame(game.gameHash);
             navigator.clipboard.writeText("http://localhost:8080?game="+game.gameHash);
             console.log("joined")            
             router.push({ path: '/lobby'})
@@ -51,20 +54,9 @@ export default {
         const setGameHash =(response)=>
         {
             errorInput.value = response.message;
-            game.gameHash = response.data.gameHash
-            console.log(response)
+            game.gameHash = response.data.gameHash            
             ErrorBounceAnimation();
             redirectToLobby();
-        }
-
-        const joinGame = ()=>
-        {
-            WebSocket.sendRequest("join",{userHash : user.hash, gameHash : game.gameHash},redirectToLobby,RejectError)
-        }
-
-        const createConnection = ()=>
-        {
-            WebSocket.open(null,RejectError);
         }
 
         const createGame = (response)=>
@@ -72,28 +64,28 @@ export default {
             user.pseudo = response.data.pseudo;
             user.hash = response.data.userHash;
             errorInput.value = response.message;
-            console.log(response)
             ErrorBounceAnimation();
             if(typeof(game.gameHash) === "undefined" )
             {
-                console.log("creating game...")
-                WebSocket.sendRequest("game",{userHash : user.hash}, setGameHash, RejectError);            
+                console.log("creating game...")                
+                backApp.sendRequest("game",{userHash : user.hash}, setGameHash, RejectError);            
             }
             else
             {
-                console.log("joining...")
-                joinGame()
+                console.log("joining...")                
+                backApp.sendRequest("join",{userHash : user.hash, gameHash : game.gameHash},redirectToLobby,RejectError)
             }
            
         }        
 
         const createUser = ()=>
         {   
-            WebSocket.sendRequest("user",{name : pseudoInput.value, userHash : user.hash},
+            backApp.sendRequest("user",{name : pseudoInput.value, userHash : user.hash},
             createGame, RejectError)                   
         }
+
+        backApp.openConnection(null,RejectError);
         
-        createConnection();
 
         // -> les fonctions sont rangés par ordres d'utilisations
         
@@ -109,9 +101,12 @@ export default {
             createUser,
             createGame,
             redirectToLobby,
-            createConnection,
             setGameHash
         }
+    },
+    unmounted()
+    {
+        
     }
 }
 </script>

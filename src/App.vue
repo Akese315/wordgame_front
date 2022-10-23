@@ -2,7 +2,8 @@
 <script>
 import { reactive } from '@vue/reactivity';
 import { provide} from 'vue';
-import {Socket} from './scripts/request.js'
+import {BackApp} from './scripts/connection.js'
+import {Game} from './scripts/game.js'
 
 export default 
 {
@@ -10,18 +11,19 @@ export default
   setup()
   {
     const user = reactive({pseudo :"none", hash:"none"})
-    const game = reactive({gameHash : "none", owner : "none", points : 0})
+    const game = reactive(new Game())
+    console.log(game)
     const ringAudio = require("./assets/Water_Drop.mp3");
-    const socket = new Socket();
+    const backApp = new BackApp(game);
     provide("user", user);
     provide("game",game);
     provide("ringAudio", ringAudio);
-    provide("WebSocket",socket)
+    provide("backApp",backApp)
     return    {
       user : user,
       game : game,
       ringAudio : ringAudio,
-      WebSocket : socket
+      backApp : backApp
     }
   },
 

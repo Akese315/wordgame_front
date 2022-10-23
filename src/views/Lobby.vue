@@ -21,10 +21,10 @@ export default {
         const wordsNumber = ref(0);
         const totalWordsNumber = ref(50);
         const isChecked = ref(false);
-        const playerList = ref([{'pseudo' : 'noob', 'point': -20},{'pseudo' : 'bonjour', 'point': 0},{'pseudo' : 'boss', 'point': 1000}]);
+        //const playerList = ref([{'pseudo' : 'noob', 'point': -20},{'pseudo' : 'bonjour', 'point': 0},{'pseudo' : 'boss', 'point': 1000}]);
         const user = inject("user")
         const game = inject("game")
-        const WebSocket = inject("WebSocket") 
+        const backApp = inject("backApp") 
 
         const errorCallback = (message)=>
         {
@@ -37,9 +37,8 @@ export default {
             totalWordsNumber,
             isChecked,
             user,
-            playerList,
             game,
-            WebSocket,
+            backApp,
             errorCallback
         }
     }
@@ -48,7 +47,7 @@ export default {
 
 <template>
     <div id="main">
-        <WG_player_list_container v-bind:WG_player_list="this.playerList"/>
+        <WG_player_list_container v-bind:WG_player_list="this.game.playerList"/>
         <div id="menu">
             <form id="startup">
                 <h1>Parameters</h1>
