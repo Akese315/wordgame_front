@@ -1,0 +1,39 @@
+<template>
+    <span class="cardDesign">
+        {{card_value}}
+    </span>  
+</template>
+
+<script>
+export default {
+    name: "WG_gameCard",
+    props:
+    {
+        card_value :String
+    },
+    setup()
+    {
+
+    }
+}
+</script>
+
+<style scoped>
+    .cardDesign
+    {
+        background-color : white;
+        border-radius: 15px;
+        font-size: 10em;
+        margin : auto;
+        user-select:none;
+        padding: 10px;
+        cursor : pointer;
+        box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+        transition : 0.5s;
+    }
+
+    .cardDesign:hover
+    {
+        transform : scale(1.1)
+    }
+</style>
