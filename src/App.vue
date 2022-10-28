@@ -12,20 +12,38 @@ export default
   {
     const user = reactive({pseudo :"none", hash:"none"})
     const game = reactive(new Game())
-    console.log(game)
     const ringAudio = require("./assets/Water_Drop.mp3");
     const backApp = new BackApp(game);
     provide("user", user);
     provide("game",game);
     provide("ringAudio", ringAudio);
     provide("backApp",backApp)
-    return    {
-      user : user,
-      game : game,
-      ringAudio : ringAudio,
-      backApp : backApp
+
+    const openConnectionCallback = (data)=>
+    {
+      console.log(data.message);
+      user.hash = data.userHash;
+    }
+
+    const openConnectionErrorCallback = (data)=>
+    {
+      console.error(data.error)
+    }
+
+    return{
+      user,
+      game,
+      ringAudio,
+      backApp,
+      openConnectionCallback,
+      openConnectionErrorCallback
     }
   },
+
+  mounted()
+  { 
+    this.backApp.openConnection("user="+this.user.hash,this.openConnectionCallback,this.openConnectionErrorCallback);
+  }
 
 
   
@@ -34,8 +52,7 @@ export default
 
 
 <template>
-  <router-view/>
- 
+  <router-view/> 
 </template>
 
 

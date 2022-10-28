@@ -32,9 +32,13 @@
 <style scoped>
     .progress-bar
     {
-        margin :10px 0 10px 0;
+        height: auto;
         position : relative;
         width: 60%;
+        margin : 10px 0;
+        display : flex;
+        flex-direction: column;
+        align-content: center;
     }
     .slider
     { 

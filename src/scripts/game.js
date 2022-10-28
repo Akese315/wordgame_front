@@ -2,6 +2,7 @@ export class Game
 {
     gameHash 
     owner 
+    gameMod
     playerList
     
     constructor()
@@ -12,7 +13,7 @@ export class Game
     }
 
     setPlayerList(playerList)
-    {
+    {   
         this.playerList = playerList;
     }
 

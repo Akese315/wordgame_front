@@ -59,13 +59,11 @@
 <style scoped>
 #player_list_container
 {
-    border: solid 2px #3499eb;
-    border-top-left-radius: 0px;
-    border-bottom-left-radius: 0px;
-    border-bottom-right-radius: 10px;
-    border-top-right-radius: 10px;
-    background-color: #81b4dd;  
-    width : 30%;
+    background-color: #11222A;  
+    width : 20%;
+    min-width: 200px;
+    height : 100%;
+
 }
 
 h1
@@ -76,8 +74,13 @@ h1
 
 #container_player
 {
-    height : 80%;
+    height : 70%;
     box-shadow: rgba(1,1,1,0.5) -100px inset;
     overflow-y:scroll;
 }
+
+::-webkit-scrollbar {
+  background: #11222A;
+}
+
 </style>

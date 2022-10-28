@@ -5,19 +5,23 @@ import { io } from "socket.io-client";
 export class BackApp
 {
     #wss = undefined
-    #socket = undefined
-    #isAlreadyCreated = false;
-    game;
+    gameReference
+    isClose = true;
+    #startCallback;
+    #errorCallback;
+    #infoCallback;
 
     constructor(game)
-    {   
-        this.game = game;
-    }
-    
-    
-    openConnection(query,ErrorCallback)
     {
-        this.#isAlreadyCreated = true;
+        this.gameReference = game;
+    }
+
+    openConnection(query,callback,ErrorCallback)
+    {
+        if(typeof(this.#wss) !="undefined" && !this.isClose)
+        {
+            return;
+        }
         this.#wss = new io(API_URL,
         {
             path: "/",
@@ -27,11 +31,14 @@ export class BackApp
             query: query,
             
         });
+        this.#wss.on("handshakeResponse",(data)=>
+        {
+            callback(data);
+        })
         this.#wss.on("connect_error", (error) => {
             ErrorCallback(error)
           });
-        this.#wss.on("connect", (socket) => {
-            this.#socket = socket;
+        this.#wss.on("connect", () => {
             this.connected()
           });
 
@@ -41,6 +48,24 @@ export class BackApp
         this.#wss.on("notification", (message) => {
             console.log(message) 
         });
+
+        this.#wss.on("error",(error) =>
+        {
+            if(typeof(this.#errorCallback) != "undefined")
+            {
+                this.#errorCallback(error)
+            }
+        });
+
+        this.#wss.on("info",(info) =>
+        {
+            if(typeof(this.#errorCallback) != "undefined")
+            {
+                this.#infoCallback(info)
+            }
+        });
+
+        this.isClose = false;
     }
 
     closeSocket()
@@ -49,46 +74,55 @@ export class BackApp
         console.log("socket close by the client")
     }
 
-    sendRequest(eventName, request, callback, error)
-    {
+    sendRequest(eventName, request, callback)
+    {   
         this.#wss.emit(eventName, request)
-        this.#wss.on(eventName,(message)=>
+        this.#wss.on(eventName,(response)=>
         {
-            if(typeof(message.error)==="undefined")
-            {
-                callback(message);
-            }
-            else
-            {
-                error(message.error);   
-            }           
+            callback(response);
             this.#wss.off(eventName);
         })        
     } 
 
     setPlayerList(playerList)
     {
-        this.game.setPlayerList(playerList);
+        this.gameReference.setPlayerList(playerList);
     }
 
     switchCallback(response)
     {
-        if(typeof(response.playerList) != "undefined" && typeof(this.playerListCallback) != "undefined")
+        if(typeof(response.playerList) != "undefined")
         {
             this.setPlayerList(response.playerList)
         }
-        if(typeof(response.update) != "undefined" && typeof(this.updateCallback) != "undefined")
+        if(typeof(response.hasStart) != "undefined" && typeof(this.#startCallback) != "undefined")
         {
-            this.updateCallback(response.update);
+            if(response.hasStart)
+            {
+                this.#startCallback();                
+            }            
         }
     }
 
+    setStartCallback(callback)
+    {
+        this.#startCallback = callback;
+    }
+
+    setErrorCallback(callback)
+    {
+        this.#errorCallback = callback;
+    }
+
+    setInfoCallback(callback)
+    {
+        this.#infoCallback = callback;
+    }
     
     listenGame(gameHash)
-    {
-        this.#socket.join(gameHash, (response)=>
-        {   
-            console.log(response);
+    {   
+        this.#wss.on(gameHash, (response)=>
+        {  
             this.switchCallback(response);            
         });
     }
@@ -100,12 +134,13 @@ export class BackApp
 
     disconnected()
     {
-        console.log("Socket closed"); // undefined
+        this.isClose = true;
+        console.log("Socket closed");
     }
 
     connected()
     {
-        console.log("Connecté"); // x8WIv7-mJelg7on_ALbx
+        console.log("Connecté");
     }
 }
         
