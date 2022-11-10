@@ -70,10 +70,10 @@ export default {
         const startGame =()=>
         {
             backApp.sendRequest("start",
-            {isFrench: isChecked.value, round: round.value, timeout : timeout.value, userHash: user.hash},isStarting,errorCallback)
+            {isFrench: isChecked.value, round: round.value, gameMod : game.gameMod, timeout : timeout.value, userHash: user.hash},isStarting,errorCallback)
         }
 
-        backApp.setStartCallback(redirectToGame)
+        backApp.setLaunchCallback(redirectToGame)
 
         return {
             progressBarRound,
@@ -119,8 +119,8 @@ export default {
                     </form>
                     <form id="gamemod" @submit.prevent="startGame">
                         <div id="listGameMod">
-                            <WGbuttonImage v-bind:image_url="url1" v-on:click="setGame('game-1')" game_name="Choice" background="1d323c" />
-                            <WGbuttonImage v-bind:image_url="url2" v-on:click="setGame('game-2')" game_name="Assembly" background="B0DAEF" />
+                            <WGbuttonImage v-bind:image_url="url1" v-on:click="setGame('gameMod1')" game_name="Choice" background="1d323c" />
+                            <WGbuttonImage v-bind:image_url="url2" v-on:click="setGame('gameMod2')" game_name="Assembly" background="B0DAEF" />
                         </div>
                         <WGbutton wg_value ='Commencer'/>
                     </form>

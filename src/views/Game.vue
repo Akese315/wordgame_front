@@ -17,7 +17,7 @@ export default {
         const user = inject("user")
         const game = inject("game")
         var component;
-        if(game.gameMod == "game-1")
+        if(game.gameMod == "gameMod1")
         {
             component = wg_game_mod_1
         }else

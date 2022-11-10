@@ -8,6 +8,7 @@ export class BackApp
     gameReference
     isClose = true;
     #startCallback;
+    #launchCallback;
     #errorCallback;
     #infoCallback;
 
@@ -95,11 +96,12 @@ export class BackApp
         {
             this.setPlayerList(response.playerList)
         }
-        if(typeof(response.hasStart) != "undefined" && typeof(this.#startCallback) != "undefined")
+        if(typeof(response.hasLaunched) != "undefined" && typeof(this.#launchCallback) != "undefined")
         {
-            if(response.hasStart)
+            console.log(response)
+            if(response.hasLaunched)
             {
-                this.#startCallback();                
+                this.#launchCallback();                
             }            
         }
     }
@@ -107,6 +109,11 @@ export class BackApp
     setStartCallback(callback)
     {
         this.#startCallback = callback;
+    }
+
+    setLaunchCallback(callback)
+    {
+        this.#launchCallback = callback;
     }
 
     setErrorCallback(callback)
