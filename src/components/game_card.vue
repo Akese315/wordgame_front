@@ -1,5 +1,5 @@
 <template>
-    <span class="cardDesign">
+    <span @click="this.clickEvent" class="cardDesign">
         {{card_value}}
     </span>  
 </template>
@@ -9,11 +9,21 @@ export default {
     name: "WG_gameCard",
     props:
     {
-        card_value :String
+        Info_value :String,
+        Error_value : String,
+        card_value : String
     },
-    setup()
+    emits : ['sendAnswer'],
+    setup(props, {emit})
     {
+        const clickEvent = ()=>
+        {
+            emit('sendAnswer');
+        }
 
+        return{
+            clickEvent
+        }
     }
 }
 </script>

@@ -9,6 +9,7 @@ export class BackApp
     isClose = true;
     #startCallback;
     #launchCallback;
+    #roundCallback;
     #errorCallback;
     #infoCallback;
 
@@ -92,9 +93,19 @@ export class BackApp
 
     switchCallback(response)
     {
+        console.log(response)
         if(typeof(response.playerList) != "undefined")
         {
+            console.log("before playerList")
             this.setPlayerList(response.playerList)
+            console.log("after playerList")
+        }
+        if(typeof(response.round) != "undefined" && typeof(this.#roundCallback) != "undefined")
+        {
+            console.log("before round")
+            console.log(response.round)
+            this.#roundCallback(response.round)
+            console.log("after round")
         }
         if(typeof(response.hasLaunched) != "undefined" && typeof(this.#launchCallback) != "undefined")
         {
@@ -104,6 +115,7 @@ export class BackApp
                 this.#launchCallback();                
             }            
         }
+        console.log("after switch")
     }
 
     setStartCallback(callback)
@@ -114,6 +126,11 @@ export class BackApp
     setLaunchCallback(callback)
     {
         this.#launchCallback = callback;
+    }
+
+    setRoundCallback(callback)
+    {
+        this.#roundCallback = callback
     }
 
     setErrorCallback(callback)
@@ -130,6 +147,7 @@ export class BackApp
     {   
         this.#wss.on(gameHash, (response)=>
         {  
+            console.log(response)
             this.switchCallback(response);            
         });
     }

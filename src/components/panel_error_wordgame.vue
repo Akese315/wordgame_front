@@ -1,5 +1,5 @@
 <template>
-  <div id="information" v-bind:style="{'background-color' : background, 'display' : display}">
+  <div id="information" v-bind:style="{'background-color' : this.background, 'display' : this.display}">
     <h1></h1>
   </div>
 </template>

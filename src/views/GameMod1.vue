@@ -1,12 +1,10 @@
 <template>
     <div id="background">
         <div id="gameplay">
-            <WG_gameCard v-bind:card_value="value1"/>
-            <WG_gameCard v-bind:card_value="value2"/>
-            <WG_gameCard v-bind:card_value="value3"/>
+            <WG_gameCard @sendAnswer="this.sendAnswer(card)" v-for="(card, index) in this.cards" v-bind:key="index" v-bind:card_value="card"/>
         </div>
-        <WG_panelError v-bind:Info_value="errorCallback" v-bind:Error_value="infoCallback"/>
-        <h1>Trouver le kanji : 「きみ」</h1>
+        <WG_panelError v-bind:informationProp="this.infoValue" v-bind:errorProp="this.errorValue"/>
+        <h1>{{this.assignment}}</h1>
     </div>  
 </template>
 
@@ -14,6 +12,7 @@
 import WG_gameCard from '@/components/game_card.vue';
 import WG_panelError from '@/components/panel_error_wordgame.vue'
 import { inject } from '@vue/runtime-core';
+import {ref} from 'vue';
 
 export default {
     name : "wg_game_mod_1",
@@ -23,37 +22,56 @@ export default {
         WG_panelError
     },
     setup()
-    {   
-        var value1 = "君"
-        var value2 = "待"
-        var value3 = "踏"
-        
+    {         
         const backApp = inject("backApp")
+        const cards = ref(new Array)
+        const errorValue = ref("")
+        const infoValue = ref("")
+        const assignment = ref("");
         console.log("This is gamemod1")
-
         const errorCallback = (error)=>
         {
-            return error;
+            errorValue.value = error;
         }
 
         const infoCallback = (info)=>
         {
-            return info;
+            infoValue.value = info;
+        }
+
+        const nextRound = (round)=>
+        {
+            console.log(round)
+            cards.value = round.cards;
+            assignment.value = round.assignment;
+            console.log(cards.value)
+        }
+
+        const sendAnswer = (answer)=>
+        {
+            backApp.sendRequest("answer",{answer : answer });
         }
         
         const setReady = ()=>
         {
-            backApp.setErrorCallback(errorCallback)
-            backApp.setInfoCallback(infoCallback)
-            backApp.sendRequest("ready",{ready : true});
+            backApp.setErrorCallback(errorCallback);
+            backApp.setInfoCallback(infoCallback);
+            backApp.setRoundCallback(nextRound);
+            backApp.sendRequest("ready",{isReady : true});
         }
 
         setReady();
 
         return{
-            value1,
-            value2,
-            value3,
+            cards,
+            assignment,
+            infoValue,
+            errorValue,
+            nextRound,
+            infoCallback,
+            errorCallback,
+            setReady,
+            sendAnswer
         }
     }
 
