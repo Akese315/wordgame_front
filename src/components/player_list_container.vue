@@ -51,7 +51,11 @@
     <div id="player_list_container">
         <h1>Player List</h1>
         <div id ="container_player">
-            <WG_player_view v-for="(player, index) in this.playerList" v-bind:key="index" v-bind:WG_pseudo="player.pseudo" v-bind:WG_point="player.point"/>
+            <WG_player_view v-for="(player, index) in this.playerList" 
+            v-bind:key="index" 
+            v-bind:WG_pseudo="player.pseudo" 
+            v-bind:WG_point="player.point"
+            v-bind:WG_hasFinished="player.hasFinished"/>
         </div>
     </div>
 </template>

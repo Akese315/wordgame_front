@@ -4,10 +4,12 @@ export class Game
     owner 
     gameMod
     playerList
+    rankingList
     
     constructor()
     {
         this.playerList = new Array();
+        this.rankingList = new Array();
         this.gameHash = "none"
         this.owner = "none"
     }
@@ -15,6 +17,11 @@ export class Game
     setPlayerList(playerList)
     {   
         this.playerList = playerList;
+    }
+
+    setRankingList(rankingList)
+    {   
+        this.rankingList = rankingList;
     }
 
     getPlayerList()

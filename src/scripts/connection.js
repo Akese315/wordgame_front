@@ -8,6 +8,7 @@ export class BackApp
     gameReference
     isClose = true;
     #startCallback;
+    #endGameCallback
     #launchCallback;
     #roundCallback;
     #errorCallback;
@@ -67,6 +68,50 @@ export class BackApp
             }
         });
 
+        this.#wss.on("playerList",(response) =>
+        {
+            if(typeof(this.setPlayerList) != "undefined")
+            {
+                console.log(response.playerList)
+                this.setPlayerList(response.playerList)
+            }
+        });
+        this.#wss.on("round",(response) =>
+        {
+            if(typeof(response.round) != "undefined" && typeof(this.#roundCallback) != "undefined")
+            {
+                this.#roundCallback(response)
+            }
+        });
+
+        this.#wss.on("endGame",(response) =>
+        {
+            if(typeof(response.rankingList) != "undefined" && typeof(response.hasEnded) != "undefined" && typeof(this.#endGameCallback) != "undefined")
+            {
+                this.setRankingList();
+                this.#endGameCallback(response)
+            }
+        });
+
+        this.#wss.on("endGame",(response) =>
+        {
+            if(typeof(response.rankingList) != "undefined" && typeof(response.hasEnded) != "undefined" && typeof(this.#endGameCallback) != "undefined")
+            {
+                this.setRankingList();
+                this.#endGameCallback(response)
+            }
+        });
+
+        this.#wss.on("launch",(response)=>
+        {
+            if(typeof(response.hasLaunched) != "undefined" && typeof(this.#launchCallback) != "undefined")
+            {
+                if(response.hasLaunched)
+                {
+                    this.#launchCallback(response.gameMod);                
+                }            
+            }
+        })       
         this.isClose = false;
     }
 
@@ -81,7 +126,10 @@ export class BackApp
         this.#wss.emit(eventName, request)
         this.#wss.on(eventName,(response)=>
         {
-            callback(response);
+            if(typeof(callback)!="undefined")
+            {
+                callback(response);
+            }      
             this.#wss.off(eventName);
         })        
     } 
@@ -91,36 +139,19 @@ export class BackApp
         this.gameReference.setPlayerList(playerList);
     }
 
-    switchCallback(response)
+    setRankingList(rankingList)
     {
-        console.log(response)
-        if(typeof(response.playerList) != "undefined")
-        {
-            console.log("before playerList")
-            this.setPlayerList(response.playerList)
-            console.log("after playerList")
-        }
-        if(typeof(response.round) != "undefined" && typeof(this.#roundCallback) != "undefined")
-        {
-            console.log("before round")
-            console.log(response.round)
-            this.#roundCallback(response.round)
-            console.log("after round")
-        }
-        if(typeof(response.hasLaunched) != "undefined" && typeof(this.#launchCallback) != "undefined")
-        {
-            console.log(response)
-            if(response.hasLaunched)
-            {
-                this.#launchCallback();                
-            }            
-        }
-        console.log("after switch")
+        this.gameReference.setRankingList(rankingList);
     }
 
     setStartCallback(callback)
     {
         this.#startCallback = callback;
+    }
+
+    setEndGameCallback(callback)
+    {
+        this.#endGameCallback = callback;
     }
 
     setLaunchCallback(callback)
@@ -141,15 +172,6 @@ export class BackApp
     setInfoCallback(callback)
     {
         this.#infoCallback = callback;
-    }
-    
-    listenGame(gameHash)
-    {   
-        this.#wss.on(gameHash, (response)=>
-        {  
-            console.log(response)
-            this.switchCallback(response);            
-        });
     }
 
     stopListeningGame(gameHash)

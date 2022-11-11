@@ -39,13 +39,13 @@ export default {
             infoValue.value = info;
         }
 
-        const nextRound = (round)=>
+        const nextRound = (data)=>
         {
-            console.log(round)
-            cards.value = round.cards;
-            assignment.value = round.assignment;
-            console.log(cards.value)
+            cards.value = data.round.cards;
+            assignment.value = data.round.assignment;
         }
+
+
 
         const sendAnswer = (answer)=>
         {

@@ -51,8 +51,9 @@ export default {
             console.log(message)
         }
 
-        const redirectToGame =()=>
+        const redirectToGame =(gameMod)=>
         {
+            game.gameMod = gameMod;
             router.push({ path: '/game'})
         }
 
@@ -64,12 +65,11 @@ export default {
         const setGame =(gameMod)=>
         {
             game.gameMod = gameMod;
-            console.log(game)
         }
 
         const startGame =()=>
         {
-            backApp.sendRequest("start",
+            backApp.sendRequest("launch",
             {isFrench: isChecked.value, round: round.value, gameMod : game.gameMod, timeout : timeout.value, userHash: user.hash},isStarting,errorCallback)
         }
 
@@ -122,7 +122,6 @@ export default {
                             <WGbuttonImage v-bind:image_url="url1" v-on:click="setGame('gameMod1')" game_name="Choice" background="1d323c" />
                             <WGbuttonImage v-bind:image_url="url2" v-on:click="setGame('gameMod2')" game_name="Assembly" background="B0DAEF" />
                         </div>
-                        <WGbutton wg_value ='Commencer'/>
                     </form>
                 </div>
             </div>

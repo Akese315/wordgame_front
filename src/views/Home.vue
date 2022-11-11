@@ -43,7 +43,6 @@ export default {
 
         const redirectToLobby = ()=>
         {   
-            backApp.listenGame(game.gameHash);
             console.log("joined")            
             router.push({ path: '/lobby'})
         }
@@ -61,7 +60,6 @@ export default {
         const setPlayerList = (response)=>
         {
             game.setPlayerList(response.playerList)
-            console.log(game.getPlayerList())
             redirectToLobby();
         }
 
@@ -84,6 +82,7 @@ export default {
 
         const createUser = ()=>
         {   
+            console.log("setting pseudo...")
             backApp.sendRequest("setPseudo",{pseudo : pseudoInput.value, userHash : user.hash},
             createGame, RejectError)                   
         }        
