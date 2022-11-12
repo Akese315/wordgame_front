@@ -29,7 +29,7 @@ export default {
 
         const endGame =()=>
         {
-
+            console.log("game ended")
             component.value = wg_end_game_menu;
         }
 

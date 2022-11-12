@@ -1,9 +1,9 @@
 <script>
 import WG_player_list_container from '../components/player_list_container.vue'
 import WGbutton from '../components/button_wordgame.vue'
-import WGtoggleButton from '../components/toggle_button_wordgame.vue'
 import WGprogressBar from '../components/range_slider_wordgame.vue'
 import WGbuttonImage from '@/components/button_image_wordgame.vue'
+import WGmultichoice from '@/components/multichoice_wordgame.vue'
 import game1 from '@/assets/kanji_game_1.png'
 import game2 from '@/assets/kanji_game_2.png'
 import { ref } from '@vue/reactivity';
@@ -16,9 +16,9 @@ export default {
     {
         WG_player_list_container,
         WGbutton,
-        WGtoggleButton,
         WGbuttonImage,
-        WGprogressBar
+        WGprogressBar,
+        WGmultichoice
     },
     setup() //ne peut pas utiliser this dans cette fonction
     {
@@ -35,7 +35,10 @@ export default {
         const router = useRouter();
         const width = ref("50%")
         const url1 = ref(game1)
-        const url2 = ref(game2)
+        const url2 = ref(game2) 
+        const choices = ref([1,2,3,4,5])
+        const jlptLevel = ref(5)
+
         const showParameters = ()=>
         {
             width.value = "50%"            
@@ -70,7 +73,7 @@ export default {
         const startGame =()=>
         {
             backApp.sendRequest("launch",
-            {isFrench: isChecked.value, round: round.value, gameMod : game.gameMod, timeout : timeout.value, userHash: user.hash},isStarting,errorCallback)
+            {jlpt : jlptLevel.value, round: round.value, gameMod : game.gameMod, timeout : timeout.value, userHash: user.hash},isStarting,errorCallback)
         }
 
         backApp.setLaunchCallback(redirectToGame)
@@ -89,6 +92,8 @@ export default {
             width,
             url1,
             url2,
+            choices,
+            jlptLevel,
             showParameters,
             showGameMod,
             errorCallback,
@@ -110,7 +115,7 @@ export default {
                 </span>
                 <div id="sub_menu" v-bind:style="{left : width}">
                     <form id="parameters" @submit.prevent="showGameMod">                
-                        <WGtoggleButton parameter_label="French" v-model="this.isChecked"/> 
+                        <WGmultichoice v-model="this.jlptLevel" v-bind:WG_choices="this.choices" WG_title="jlpt level:"/> 
                         <WGprogressBar v-model="this.progressBarRound"/>
                         <p id="wordsNumber">Nombre de round : {{this.round = Math.round(parseInt(this.progressBarRound)*(this.maxRound)/100)}}</p>
                         <WGprogressBar v-model="this.progressBarTime"/>

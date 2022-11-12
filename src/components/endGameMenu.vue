@@ -32,11 +32,11 @@ export default {
         {
             message.value =""
         }
-        watch(rankingList.value,updateRankingList,{deep:true})
+        watch(rankingList,updateRankingList)
+
         return{
             rankingList,
-            message,
-            length
+            message
         }
     }
     

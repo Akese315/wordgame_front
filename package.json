@@ -2,7 +2,7 @@
   "name": "wordgame",
   "version": "0.1.0",
   "private": true,
-    "scripts": {
+  "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint"
@@ -44,5 +44,17 @@
     "last 2 versions",
     "not dead",
     "not ie 11"
-  ]
+  ],
+  "description": "```\r npm install\r ```",
+  "main": "babel.config.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Akese315/wordgame_front.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Akese315/wordgame_front/issues"
+  },
+  "homepage": "https://github.com/Akese315/wordgame_front#readme"
 }
