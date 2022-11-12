@@ -10,6 +10,7 @@ export class BackApp
     #startCallback;
     #endGameCallback
     #launchCallback;
+    #rankingListCallback
     #roundCallback;
     #errorCallback;
     #infoCallback;
@@ -31,7 +32,7 @@ export class BackApp
             serveClient: false,
             transports: ["websocket"],
             upgrade: true,
-            query: query,
+            query: query
             
         });
         this.#wss.on("handshakeResponse",(data)=>
@@ -72,7 +73,6 @@ export class BackApp
         {
             if(typeof(this.setPlayerList) != "undefined")
             {
-                console.log(response.playerList)
                 this.setPlayerList(response.playerList)
             }
         });
@@ -84,20 +84,18 @@ export class BackApp
             }
         });
 
-        this.#wss.on("endGame",(response) =>
+        this.#wss.on("rankingList",(response) =>
         {
-            if(typeof(response.rankingList) != "undefined" && typeof(response.hasEnded) != "undefined" && typeof(this.#endGameCallback) != "undefined")
+            if(typeof(response.rankingList) != "undefined")
             {
-                this.setRankingList();
-                this.#endGameCallback(response)
+                this.setRankingList(response.rankingList)
             }
         });
 
         this.#wss.on("endGame",(response) =>
         {
-            if(typeof(response.rankingList) != "undefined" && typeof(response.hasEnded) != "undefined" && typeof(this.#endGameCallback) != "undefined")
+            if(typeof(response.playerFinished) != "undefined" && typeof(this.#endGameCallback) != "undefined")
             {
-                this.setRankingList();
                 this.#endGameCallback(response)
             }
         });
@@ -163,7 +161,7 @@ export class BackApp
     {
         this.#roundCallback = callback
     }
-
+    
     setErrorCallback(callback)
     {
         this.#errorCallback = callback;

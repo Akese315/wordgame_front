@@ -13,7 +13,6 @@
             const pseudo = toRef(props, "WG_pseudo");
             const point = toRef(props, "WG_point");
             const hasFinished = toRef(props, "WG_hasFinished");
-            console.log(hasFinished)
             return{
                 pseudo,
                 point,

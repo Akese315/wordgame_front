@@ -16,7 +16,6 @@ export default {
     },
     setup()
     {
-        const user = inject("user")
         const game = inject("game")
         const backApp = inject("backApp")
         var component = shallowRef("")
@@ -28,18 +27,15 @@ export default {
             component.value = wg_game_mod_2
         }
 
-        const endGame =(response)=>
+        const endGame =()=>
         {
+
             component.value = wg_end_game_menu;
-            game.rankingList = response.rankingList
         }
 
-
-        backApp.setEndGameCallback(endGame)
-
+        backApp.setEndGameCallback(endGame);
 
         return{
-            user,
             backApp,
             component,
             game
@@ -53,7 +49,7 @@ export default {
 <template>
     <div id="main">
         <WG_player_list_container v-bind:WG_player_list="game.playerList"/>
-        <component v-bind:is="this.component" v-bind:rankingList="game.rankingList"></component>
+        <component v-bind:is="this.component" v-bind:WG_rankingList="game.rankingList"></component>
    </div>
 </template>
 
