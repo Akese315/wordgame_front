@@ -1,5 +1,5 @@
 <template>
-    <span @click="this.clickEvent" class="cardDesign">
+    <span @click="this.clickEvent" class="cardDesign" v-bind:style="{fontSize : String_size }">
         {{card_value}}
     </span>  
 </template>
@@ -11,11 +11,16 @@ export default {
     {
         Info_value :String,
         Error_value : String,
-        card_value : String
-    },
+        card_value : String,
+        String_size : {
+            default : "10em",
+            type : String
+        }
+        },
     emits : ['sendAnswer'],
     setup(props, {emit})
     {
+        console.log(props.String_size)
         const clickEvent = ()=>
         {
             emit('sendAnswer');
@@ -33,7 +38,6 @@ export default {
     {
         background-color : white;
         border-radius: 15px;
-        font-size: 10em;
         margin : auto;
         user-select:none;
         padding: 10px;

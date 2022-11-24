@@ -22,7 +22,8 @@ export default {
         if(game.gameMod == "gameMod1")
         {
             component.value = wg_game_mod_1
-        }else
+        }
+        if(game.gameMod == "gameMod2")
         {
             component.value = wg_game_mod_2
         }
@@ -40,9 +41,7 @@ export default {
             component,
             game
         }
-    }
-
-  
+    }  
 }
 </script>
 

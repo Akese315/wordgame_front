@@ -14,6 +14,8 @@ export default
     const game = reactive(new Game())
     const ringAudio = require("./assets/Water_Drop.mp3");
     const backApp = new BackApp(game);
+    user.hash = localStorage.getItem("userID");
+    user.pseudo = localStorage.getItem("pseudo");
     provide("user", user);
     provide("game",game);
     provide("ringAudio", ringAudio);
@@ -23,6 +25,8 @@ export default
     {
       console.log(data.message);
       user.hash = data.userHash;
+      localStorage.setItem("userID",user.hash)
+      console.log(localStorage.getItem("userID"))
     }
 
     const openConnectionErrorCallback = (data)=>

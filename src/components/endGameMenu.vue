@@ -6,6 +6,9 @@
             <span class="rankPlayer" v-for="(player, index) in this.rankingList" v-bind:key="index" >{{index+1}}. {{player}}</span>
         </div>
         <h2>{{this.message}}</h2>
+        <div>
+            <button_wordgameVue/><button_wordgameVue/>
+        </div>
     </div>
   </div>
 </template>
@@ -13,8 +16,13 @@
 <script>
 import { toRef,ref } from '@vue/reactivity' 
 import { watch } from '@vue/runtime-core'
+import button_wordgameVue from './button_wordgame.vue'
 export default {
     name : "wg_end_game_menu",
+    components:
+    {
+        button_wordgameVue
+    },
     props:
     {
         WG_rankingList : Array
@@ -70,6 +78,8 @@ export default {
     {
         margin : 0 auto;
         width : 60%;
+        height : 50%;
+        overflow-y: auto;
     }
     #background
     {
@@ -87,4 +97,10 @@ export default {
     {
         text-align: center;
     }
+
+    .WG_button
+    {
+        
+    }
+    
 </style>

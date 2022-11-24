@@ -78,8 +78,9 @@ export class BackApp
         });
         this.#wss.on("round",(response) =>
         {
+            console.log(response.round)
             if(typeof(response.round) != "undefined" && typeof(this.#roundCallback) != "undefined")
-            {
+            {                
                 this.#roundCallback(response)
             }
         });

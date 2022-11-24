@@ -67,6 +67,7 @@ export default {
         const createGame = (response)=>
         { 
             user.pseudo = response.pseudo;
+            localStorage.setItem("pseudo", user.pseudo)
             errorInput.value = response.message;
             ErrorBounceAnimation();
             if(typeof(game.gameHash) === "undefined" )

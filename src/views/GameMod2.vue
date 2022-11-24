@@ -1,43 +1,65 @@
 <template>
     <div id="background">
         <div id="gameplay">
-            <WG_gameCard v-bind:card_value="value1"/>
-            <WG_gameCard v-bind:card_value="value2"/>
-            <WG_gameCard v-bind:card_value="value3"/>
+            <WG_gameCard @sendAnswer="this.sendAnswer(card)" v-for="(card, index) in this.cards" v-bind:key="index" v-bind:card_value="card" v-bind:String_size="'3em'"/>
         </div>
-        <h1>Assembler pour trouver le kanji : 「kimi」</h1>
+        <WG_panelError v-bind:informationProp="this.infoValue" v-bind:errorProp="this.errorValue"/>
+        <h1>{{this.assignment}}</h1>
     </div>  
 </template>
 
 <script>
 import { inject} from 'vue';
+import {ref} from 'vue';
+import WG_gameCard from '@/components/game_card.vue';
+import WG_panelError from '@/components/panel_error_wordgame.vue'
 export default {
     name : "wg_game_mod_2",
+    components:
+    {
+        WG_gameCard,
+        WG_panelError
+    },
     setup()
     {
-        const backApp = inject("backApp") 
-        var value1 = "君"
-        var value2 = "待"
-        var value3 = "踏"
+        const backApp = inject("backApp"); 
+        const cards = ref(new Array);
+        const errorValue = ref("");
+        const infoValue = ref("");
+        const assignment = ref("");
         console.log("This is gamemod2")
 
         const errorCallback = (error)=>
         {
             return error;
         }
+
+        const infoCallback = (info)=>
+        {
+            console.log(info)
+        }
+
+        const nextRound = (data)=>
+        {
+            cards.value = data.round.cards
+            assignment.value = data.round.assignment;
+        }
         
         const setReady = ()=>
         {
             backApp.setErrorCallback(errorCallback)
+            backApp.setInfoCallback(infoCallback);
+            backApp.setRoundCallback(nextRound);
             backApp.sendRequest("ready",{ready : true});
         }
         setReady();
         
         return{
             backApp,
-            value1,
-            value2,
-            value3
+            assignment,
+            cards,
+            errorValue,
+            infoValue
         }
     }
 
@@ -47,7 +69,7 @@ export default {
 <style scoped>
     #background
     {   
-        width : 100%;
+        height : 100%;
         background-color : rgb(146, 209, 91);
         display: flex;
         flex-direction: column;
@@ -56,7 +78,12 @@ export default {
     #gameplay
     {
         height : 70%;
-        width : 100%;
+        width : 60%;
+        margin : 0 auto;
+        display: grid;
+        grid-template-rows: 1fr 1fr;
+        grid-template-columns: 1fr 1fr 1fr;
+        
     }
 
     h1
@@ -65,10 +92,9 @@ export default {
         width : max-content;
         position :relative;
         margin : 0 auto;
-        padding : 4px;
+        padding : 8px;
         border: 3px solid black;
-
-
+        text-align: center;
     }
 
 </style>
