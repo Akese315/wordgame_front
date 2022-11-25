@@ -4,6 +4,7 @@ import { reactive } from '@vue/reactivity';
 import { provide} from 'vue';
 import {BackApp} from './scripts/connection.js'
 import {Game} from './scripts/game.js'
+import { useRoute, useRouter } from 'vue-router';
 
 export default 
 {
@@ -15,6 +16,10 @@ export default
     const ringAudio = require("./assets/Water_Drop.mp3");
     const backApp = new BackApp(game);
     user.hash = localStorage.getItem("userID");
+    const router = useRouter();
+    const route = useRoute(); 
+    console.log(route);
+    console.log(router)
     user.pseudo = localStorage.getItem("pseudo");
     provide("user", user);
     provide("game",game);
@@ -23,10 +28,13 @@ export default
 
     const openConnectionCallback = (data)=>
     {
-      console.log(data.message);
       user.hash = data.userHash;
       localStorage.setItem("userID",user.hash)
-      console.log(localStorage.getItem("userID"))
+
+      if(data.hasGame)
+      {
+        
+      }
     }
 
     const openConnectionErrorCallback = (data)=>
@@ -46,7 +54,7 @@ export default
 
   mounted()
   { 
-    this.backApp.openConnection("user="+this.user.hash,this.openConnectionCallback,this.openConnectionErrorCallback);
+    this.backApp.openConnection({userHash: this.user.hash},this.openConnectionCallback,this.openConnectionErrorCallback);
   }
 
 
