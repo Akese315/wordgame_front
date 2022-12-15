@@ -33,7 +33,7 @@ export default
 
       if(data.hasGame)
       {
-        
+        console.log("hey")
       }
     }
 
