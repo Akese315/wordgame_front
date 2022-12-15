@@ -6,8 +6,8 @@
             <span class="rankPlayer" v-for="(player, index) in this.rankingList" v-bind:key="index" >{{index+1}}. {{player}}</span>
         </div>
         <h2>{{this.message}}</h2>
-        <div>
-            <button_wordgameVue/><button_wordgameVue/>
+        <div id="menu_button">
+            <button_wordgame @click="redirectLobby" wg_value="Lobby" /><button_wordgame @click="restart" wg_value="restart"/>
         </div>
     </div>
   </div>
@@ -16,12 +16,12 @@
 <script>
 import { toRef,ref } from '@vue/reactivity' 
 import { watch } from '@vue/runtime-core'
-import button_wordgameVue from './button_wordgame.vue'
+import button_wordgame from './button_wordgame.vue'
 export default {
     name : "wg_end_game_menu",
     components:
     {
-        button_wordgameVue
+        button_wordgame
     },
     props:
     {
@@ -30,6 +30,7 @@ export default {
     setup(props)
     {       
         const rankingList = toRef(props, "WG_rankingList")
+        console.log(rankingList)
         const message = ref("Waiting players to finish...")
 
         if(rankingList.value.length >0)
@@ -40,11 +41,24 @@ export default {
         {
             message.value =""
         }
+
+        const redirectLobby = ()=>
+        {
+            console.log("lobby")
+        }
+
+        const restart = ()=>
+        {
+            console.log("restart")
+        }
+
         watch(rankingList,updateRankingList)
 
         return{
             rankingList,
-            message
+            message,
+            redirectLobby,
+            restart
         }
     }
     
@@ -85,7 +99,7 @@ export default {
     {
         display :flex;
         background-size: cover;
-        background-image: url("https://c10.patreonusercontent.com/4/patreon-media/p/post/48032424/e9d9ab6f1ed84dadbfb1604b3a741116/eyJ3Ijo2MjB9/1.gif?token-time=1669420800&token-hash=hGhh_VyEt4ym75oq6LUvRw0geB-987WTveAxan9QABQ%3D")
+        background-image: url("https://i.pinimg.com/originals/50/37/69/50376902464168bd55be942323b9f3c7.gif")
     }
 
     h1
@@ -98,9 +112,10 @@ export default {
         text-align: center;
     }
 
-    .WG_button
+    #menu_button
     {
-        
+        display : flex;
+        justify-content: center;
     }
     
 </style>

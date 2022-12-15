@@ -27,32 +27,11 @@ export default {
         const errorValue = ref("");
         const infoValue = ref("");
         const assignment = ref("");
-        console.log("This is gamemod2")
+      
 
-        const errorCallback = (error)=>
-        {
-            return error;
-        }
-
-        const infoCallback = (info)=>
-        {
-            console.log(info)
-        }
-
-        const nextRound = (data)=>
-        {
-            cards.value = data.round.cards
-            assignment.value = data.round.assignment;
-        }
         
-        const setReady = ()=>
-        {
-            backApp.setErrorCallback(errorCallback)
-            backApp.setInfoCallback(infoCallback);
-            backApp.setRoundCallback(nextRound);
-            backApp.sendRequest("ready",{ready : true});
-        }
-        setReady();
+      
+      
         
         return{
             backApp,

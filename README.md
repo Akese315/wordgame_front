@@ -1,4 +1,4 @@
-# wordgame
+# kanjiyarou
 
 ## Project setup
 ```

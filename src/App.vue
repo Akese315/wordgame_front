@@ -1,10 +1,9 @@
-
 <script>
 import { reactive } from '@vue/reactivity';
 import { provide} from 'vue';
 import {BackApp} from './scripts/connection.js'
 import {Game} from './scripts/game.js'
-import { useRoute, useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 
 export default 
 {
@@ -14,13 +13,13 @@ export default
     const user = reactive({pseudo :"none", hash:"none"})
     const game = reactive(new Game())
     const ringAudio = require("./assets/Water_Drop.mp3");
+    const router = useRouter(); 
+    const route = useRoute();
     const backApp = new BackApp(game);
-    user.hash = localStorage.getItem("userID");
-    const router = useRouter();
-    const route = useRoute(); 
-    console.log(route);
-    console.log(router)
+    
+    user.hash = localStorage.getItem("userHash");
     user.pseudo = localStorage.getItem("pseudo");
+    game.gameHash = route.query.game;
     provide("user", user);
     provide("game",game);
     provide("ringAudio", ringAudio);
@@ -28,12 +27,39 @@ export default
 
     const openConnectionCallback = (data)=>
     {
-      user.hash = data.userHash;
-      localStorage.setItem("userID",user.hash)
-
-      if(data.hasGame)
+      console.log(data)
+      if(typeof(data.userHash) !="undefined")
       {
-        console.log("hey")
+        user.hash = data.userHash; 
+        localStorage.setItem("userHash", user.hash);
+      }  
+      if(typeof(data.userInformation) != "undefined")
+      {
+        if(typeof(data.userInformation.pseudo) !="undefined")
+        {
+          user.pseudo = data.userInformation.pseudo;
+          localStorage.setItem("pseudo", user.pseudo);
+        }
+        
+      }        
+    }
+
+    const redirectCallback = (redirect)=>
+    {
+      switch(redirect)
+      {
+        case "game" :
+          console.log("joined the game")
+          router.push({ path: "/game"});
+          break;
+        case "home" :
+          console.log("welcome :)")  
+          router.push({ path: '/'});
+          break;
+        case "lobby" :
+          console.log("joined the lobby")  
+          router.push({ path: "/lobby"});
+          break;
       }
     }
 
@@ -47,6 +73,7 @@ export default
       game,
       ringAudio,
       backApp,
+      redirectCallback,
       openConnectionCallback,
       openConnectionErrorCallback
     }
@@ -54,11 +81,9 @@ export default
 
   mounted()
   { 
+    this.backApp.setRedirectCallback(this.redirectCallback)
     this.backApp.openConnection({userHash: this.user.hash},this.openConnectionCallback,this.openConnectionErrorCallback);
-  }
-
-
-  
+  }  
 }
 </script>
 

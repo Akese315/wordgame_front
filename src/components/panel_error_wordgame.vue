@@ -15,8 +15,8 @@ export default {
     },
     setup(props)
     {
-        const error = toRef(props.errorProp)
-        const information = toRef(props.informationProp)
+        const error = toRef(props, "errorProp");
+        const information = toRef(props, "informationProp");
         const background = ref("none");
         const display = ref("none")
         return{

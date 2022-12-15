@@ -8,7 +8,6 @@ import game1 from '@/assets/kanji_game_1.png'
 import game2 from '@/assets/kanji_game_2.png'
 import { ref } from '@vue/reactivity';
 import { inject} from 'vue';
-import { useRouter } from 'vue-router'
 
 export default {
     name : "wg_lobby",
@@ -32,7 +31,6 @@ export default {
         const user = inject("user")
         const game = inject("game")
         const backApp = inject("backApp") 
-        const router = useRouter();
         const width = ref("50%")
         const url1 = ref(game1)
         const url2 = ref(game2) 
@@ -54,15 +52,11 @@ export default {
             console.log(message)
         }
 
-        const redirectToGame =(gameMod)=>
+        const isStarting = (gameMod)=>
         {
-            game.gameMod = gameMod;
-            router.push({ path: '/game'})
-        }
-
-        const isStarting = ()=>
-        {
+            console.log(gameMod)
             console.log("The game is starting")
+            game.gameMod = gameMod;
         }
 
         const setGame =(gameMod)=>
@@ -70,13 +64,11 @@ export default {
             game.gameMod = gameMod;
         }
 
-        const startGame =()=>
+        const launchGame = ()=>
         {
             backApp.sendRequest("launch",
             {jlpt : jlptLevel.value, round: round.value, gameMod : game.gameMod, timeout : timeout.value, userHash: user.hash},isStarting,errorCallback)
         }
-
-        backApp.setLaunchCallback(redirectToGame)
 
         return {
             progressBarRound,
@@ -97,7 +89,7 @@ export default {
             showParameters,
             showGameMod,
             errorCallback,
-            startGame,
+            launchGame,
             setGame
         }
     }
@@ -122,7 +114,7 @@ export default {
                         <p id="wordsNumber">Timeout/round : {{this.timeout = Math.round(parseInt(this.progressBarTime)*(this.maxTimeout)/100)}}</p>
                         <WGbutton wg_value ='Suivant'/>
                     </form>
-                    <form id="gamemod" @submit.prevent="startGame">
+                    <form id="gamemod" @submit.prevent="launchGame">
                         <div id="listGameMod">
                             <WGbuttonImage v-bind:image_url="url1" v-on:click="setGame('gameMod1')" game_name="Choice" background="1d323c" />
                             <WGbuttonImage v-bind:image_url="url2" v-on:click="setGame('gameMod2')" game_name="Assembly" background="B0DAEF" />
