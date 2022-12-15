@@ -20,7 +20,6 @@ export default {
     emits : ['sendAnswer'],
     setup(props, {emit})
     {
-        console.log(props.String_size)
         const clickEvent = ()=>
         {
             emit('sendAnswer');

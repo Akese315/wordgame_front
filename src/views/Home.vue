@@ -4,7 +4,6 @@ import WGbutton from '../components/button_wordgame.vue'
 import WGerror from '../components/error_wordgame.vue'
 import { inject} from 'vue'
 import { ref } from '@vue/reactivity';
-import { useRouter, useRoute } from 'vue-router'
 
 export default {
 
@@ -23,12 +22,9 @@ export default {
         const errorInput = ref("");
         const bounce = ref(false);
         const user = inject("user");
-        const game = inject("game")
-        const backApp = inject("backApp")
-        const router = useRouter();
-        const route = useRoute();        
-        game.gameHash = route.query.game;
-                
+        const game = inject("game");
+        const backApp = inject("backApp");   
+
         const ErrorBounceAnimation = ()=>
         {
             bounce.value = true;
@@ -41,27 +37,19 @@ export default {
             ErrorBounceAnimation();
         }
 
-        const redirectToLobby = ()=>
-        {   
-            console.log("joined")            
-            router.push({ path: '/lobby'})
-        }
-
         const setGameHash =(response)=>
         {
             errorInput.value = response.message;
             game.playerList = response.playerList;            
             game.gameHash = response.gameHash    
-            var clipboardCopy = "http://localhost:8080?game="+game.gameHash;
+            var clipboardCopy = "http://localhost:80?game="+game.gameHash;
             navigator.clipboard.writeText(clipboardCopy)
             ErrorBounceAnimation();
-            redirectToLobby();
         }
 
         const setPlayerList = (response)=>
         {
             game.setPlayerList(response.playerList)
-            redirectToLobby();
         }
 
         const createGame = (response)=>
@@ -73,12 +61,12 @@ export default {
             if(typeof(game.gameHash) === "undefined" )
             {
                 console.log("creating game...")                
-                backApp.sendRequest("create",{userHash : user.hash}, setGameHash, RejectError);            
+                backApp.sendRequest("create",{userHash : user.hash}, setGameHash);            
             }
             else
             {
                 console.log("joining...")                
-                backApp.sendRequest("join",{userHash : user.hash, gameHash : game.gameHash},setPlayerList,RejectError)
+                backApp.sendRequest("join",{userHash : user.hash, gameHash : game.gameHash},setPlayerList)
             }
         }        
 
@@ -86,23 +74,20 @@ export default {
         {   
             console.log("setting pseudo...")
             backApp.sendRequest("setPseudo",{pseudo : pseudoInput.value, userHash : user.hash},
-            createGame, RejectError)                   
+            createGame)                   
         }        
 
         // -> les fonctions sont rangés par ordres d'utilisations
-        
+        backApp.setErrorCallback(RejectError);
     
         return{
             pseudoInput,
             errorInput,
             bounce,
             user,
-            router,
-            route,
             ErrorBounceAnimation,
             createUser,
             createGame,
-            redirectToLobby,
             setGameHash
         }
     }
@@ -112,7 +97,7 @@ export default {
 <template>
     <div id ="background">
         <div id="main_card">
-            <h1>Welcome to the WordGame</h1>
+            <h1>Welcome to the KanjiYarou!</h1>
             <h2>ワードゲームへようこそ  </h2>     
                <form @submit.prevent="createUser" >
                     <WGinput v-model="this.pseudoInput" wg_placeholder="Pseudo"/>                

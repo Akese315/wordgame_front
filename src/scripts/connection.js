@@ -14,6 +14,7 @@ export class BackApp
     #roundCallback;
     #errorCallback;
     #infoCallback;
+    #redirectCallback;
 
     constructor(game)
     {
@@ -22,18 +23,16 @@ export class BackApp
 
     openConnection(query,callback,ErrorCallback)
     {
-        if(typeof(this.#wss) !="undefined" && !this.isClose)
+        if(typeof(this.#wss) !="undefined" || !this.isClose)
         {
             return;
         }
         this.#wss = new io(API_URL,
         {
-            path: "/",
-            serveClient: false,
+            path: "/socket",
             transports: ["websocket"],
             upgrade: true,
-            query: query
-            
+            query: query            
         });
         this.#wss.on("handshakeResponse",(data)=>
         {
@@ -47,7 +46,8 @@ export class BackApp
           });
 
         this.#wss.on("disconnect", () => {
-            this.disconnected()
+            console.log("disconnect event")
+            this.disconnected();
           });
         this.#wss.on("notification", (message) => {
             console.log(message) 
@@ -63,10 +63,20 @@ export class BackApp
 
         this.#wss.on("info",(info) =>
         {
-            if(typeof(this.#errorCallback) != "undefined")
+            if(typeof(info.redirect) != "undefined")       
             {
-                this.#infoCallback(info)
-            }
+                this.#redirectCallback(info.redirect);
+            }  
+            if(typeof(info.message) != "undefined")
+            {
+                if(typeof(this.#infoCallback) != "undefined")
+                {
+                    this.#infoCallback(info.message)
+                }else
+                {
+                    this.defaultInfoCallback(info.message);
+                }
+            }   
         });
 
         this.#wss.on("playerList",(response) =>
@@ -78,7 +88,6 @@ export class BackApp
         });
         this.#wss.on("round",(response) =>
         {
-            console.log(response.round)
             if(typeof(response.round) != "undefined" && typeof(this.#roundCallback) != "undefined")
             {                
                 this.#roundCallback(response)
@@ -103,12 +112,9 @@ export class BackApp
 
         this.#wss.on("launch",(response)=>
         {
-            if(typeof(response.hasLaunched) != "undefined" && typeof(this.#launchCallback) != "undefined")
-            {
-                if(response.hasLaunched)
-                {
-                    this.#launchCallback(response.gameMod);                
-                }            
+            if(typeof(this.#launchCallback) != "undefined")
+            {               
+                this.#launchCallback(response.gameMod);                      
             }
         })       
         this.isClose = false;
@@ -120,18 +126,31 @@ export class BackApp
         console.log("socket close by the client")
     }
 
+    closeEvents(eventName)
+    {
+        this.#wss.off(eventName);
+    }
+
     sendRequest(eventName, request, callback)
     {   
+        let ti = 0;
         this.#wss.emit(eventName, request)
         this.#wss.on(eventName,(response)=>
         {
+            ti++;
             if(typeof(callback)!="undefined")
             {
+                console.log("call" + ti)
                 callback(response);
             }      
             this.#wss.off(eventName);
         })        
     } 
+
+    defaultInfoCallback(info)
+    {
+        alert(info)
+    }
 
     setPlayerList(playerList)
     {
@@ -162,6 +181,11 @@ export class BackApp
     {
         this.#roundCallback = callback
     }
+
+    setRedirectCallback(callback)
+    {
+        this.#redirectCallback = callback;
+    }
     
     setErrorCallback(callback)
     {
@@ -180,8 +204,13 @@ export class BackApp
 
     disconnected()
     {
-        this.isClose = true;
         console.log("Socket closed");
+        this.closeSocket()
+        var close = alert("you are disconnected from the server")
+        if(close)
+        {
+            window.close();
+        }
     }
 
     connected()

@@ -1,77 +1,63 @@
 <template>
     <div id="background">
         <div id="gameplay">
-            <WG_gameCard @sendAnswer="this.sendAnswer(card)" v-for="(card, index) in this.cards" v-bind:key="index" v-bind:card_value="card"/>
+            <WG_gameCard  @sendAnswer="sendAnswer(card)" v-for="(card, index) in this.cards" v-bind:key="index" v-bind:card_value="card"/>
         </div>
-        <WG_panelError v-bind:informationProp="this.infoValue" v-bind:errorProp="this.errorValue"/>
         <h1>{{this.assignment}}</h1>
     </div>  
 </template>
 
 <script>
 import WG_gameCard from '@/components/game_card.vue';
-import WG_panelError from '@/components/panel_error_wordgame.vue'
-import { inject } from '@vue/runtime-core';
-import {ref} from 'vue';
-
+import { toRef } from '@vue/runtime-core';
+import { inject} from 'vue';
 export default {
     name : "wg_game_mod_1",
+    props:
+    {
+        card_array: 
+        {
+            type: [Array, Object],
+        },
+
+        assignment_string:
+        {
+            type: [String]
+        }
+    },
     components:
     {
-        WG_gameCard,
-        WG_panelError
+        WG_gameCard
     },
-    setup()
+    unmounted()
+    {
+        this.backApp.closeEvents("answer");
+    },
+    setup(props)
     {         
+        const cards = toRef(props, "card_array");
+        const assignment = toRef(props,"assignment_string");
         const backApp = inject("backApp")
-        const cards = ref(new Array)
-        const errorValue = ref("")
-        const infoValue = ref("")
-        const assignment = ref("");
+        console.log(assignment)
         console.log("This is gamemod1")
-        const errorCallback = (error)=>
+
+        const succeed = ()=>
         {
-            errorValue.value = error;
+
         }
 
-        const infoCallback = (info)=>
+        const sendAnswer = (card)=>
         {
-            infoValue.value = info;
-        }
-
-        const nextRound = (data)=>
-        {
-            cards.value = data.round.cards;
-            assignment.value = data.round.assignment;
-        }
-
-
-
-        const sendAnswer = (answer)=>
-        {
-            backApp.sendRequest("answer",{answer : answer });
+            console.log(card)
+            backApp.sendRequest("answer", {answer :card},succeed)            
         }
         
-        const setReady = ()=>
-        {
-            backApp.setErrorCallback(errorCallback);
-            backApp.setInfoCallback(infoCallback);
-            backApp.setRoundCallback(nextRound);
-            backApp.sendRequest("ready",{isReady : true});
-        }
-
-        setReady();
-
+     
         return{
             cards,
-            assignment,
-            infoValue,
-            errorValue,
-            nextRound,
-            infoCallback,
-            errorCallback,
-            setReady,
-            sendAnswer
+            backApp,
+            assignment, 
+            sendAnswer      
         }
     }
 
