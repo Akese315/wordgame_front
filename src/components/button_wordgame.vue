@@ -1,17 +1,29 @@
 <script>
 
 export default ({
-    name : "WG_button",
+    name : "WG_button",    
     props:
     {
         wg_value : String
+    },
+    emits : ['clickWG'],
+    setup(props,{emit})
+    {
+        const clickEvent = ()=>
+        {
+            emit('clickWG');
+        }
+
+        return{
+            clickEvent
+        }
     }
 })
 </script>
 
 
 <template>
-    <button > {{wg_value}} </button>
+    <button @click="clickEvent" > {{wg_value}} </button>
 </template>
 
 <style scoped>

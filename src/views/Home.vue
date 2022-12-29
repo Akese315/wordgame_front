@@ -4,6 +4,7 @@ import WGbutton from '../components/button_wordgame.vue'
 import WGerror from '../components/error_wordgame.vue'
 import { inject} from 'vue'
 import { ref } from '@vue/reactivity';
+import { useRoute } from 'vue-router';
 
 export default {
 
@@ -23,7 +24,9 @@ export default {
         const bounce = ref(false);
         const user = inject("user");
         const game = inject("game");
-        const backApp = inject("backApp");   
+        const backApp = inject("backApp"); 
+        const route = useRoute();  
+        game.gameHash = route.query.game;
 
         const ErrorBounceAnimation = ()=>
         {
@@ -42,8 +45,7 @@ export default {
             errorInput.value = response.message;
             game.playerList = response.playerList;            
             game.gameHash = response.gameHash    
-            var clipboardCopy = "http://localhost:80?game="+game.gameHash;
-            navigator.clipboard.writeText(clipboardCopy)
+            
             ErrorBounceAnimation();
         }
 
@@ -58,6 +60,7 @@ export default {
             localStorage.setItem("pseudo", user.pseudo)
             errorInput.value = response.message;
             ErrorBounceAnimation();
+            console.log(game.gameHash)
             if(typeof(game.gameHash) === "undefined" )
             {
                 console.log("creating game...")                

@@ -36,6 +36,7 @@ export default {
         const url2 = ref(game2) 
         const choices = ref([1,2,3,4,5])
         const jlptLevel = ref(5)
+        const clickToCopy = ref("Copy the gameHash")
 
         const showParameters = ()=>
         {
@@ -45,6 +46,17 @@ export default {
         const showGameMod = ()=>
         {
             width.value = "-50%"
+        }
+
+        const copyGameHash = ()=>
+        {
+            console.log("copybutton");
+            var clipboardCopy = "http://localhost:8080?game="+game.gameHash;            
+            navigator.clipboard.writeText(clipboardCopy)
+            clickToCopy.value = "Copied !"
+            setTimeout(() => {
+                clickToCopy.value = "Copy the gameHash"
+            }, 2000);
         }
 
         const errorCallback = (message)=>
@@ -86,10 +98,12 @@ export default {
             url2,
             choices,
             jlptLevel,
+            clickToCopy,
             showParameters,
             showGameMod,
             errorCallback,
             launchGame,
+            copyGameHash,
             setGame
         }
     }
@@ -112,6 +126,7 @@ export default {
                         <p id="wordsNumber">Nombre de round : {{this.round = Math.round(parseInt(this.progressBarRound)*(this.maxRound)/100)}}</p>
                         <WGprogressBar v-model="this.progressBarTime"/>
                         <p id="wordsNumber">Timeout/round : {{this.timeout = Math.round(parseInt(this.progressBarTime)*(this.maxTimeout)/100)}}</p>
+                        <WGbutton type="button" @clickWG="copyGameHash" v-bind:wg_value ="clickToCopy"/>
                         <WGbutton wg_value ='Suivant'/>
                     </form>
                     <form id="gamemod" @submit.prevent="launchGame">

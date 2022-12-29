@@ -3,7 +3,7 @@ import { reactive } from '@vue/reactivity';
 import { provide} from 'vue';
 import {BackApp} from './scripts/connection.js'
 import {Game} from './scripts/game.js'
-import { useRouter, useRoute } from 'vue-router';
+import { useRouter } from 'vue-router';
 
 export default 
 {
@@ -14,12 +14,12 @@ export default
     const game = reactive(new Game())
     const ringAudio = require("./assets/Water_Drop.mp3");
     const router = useRouter(); 
-    const route = useRoute();
+  
     const backApp = new BackApp(game);
     
     user.hash = localStorage.getItem("userHash");
     user.pseudo = localStorage.getItem("pseudo");
-    game.gameHash = route.query.game;
+    
     provide("user", user);
     provide("game",game);
     provide("ringAudio", ringAudio);

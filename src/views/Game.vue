@@ -73,7 +73,6 @@ export default {
             {
                 time--;
                 startupTitle.value = "Starting in "+ time;
-                console.log("hey")
                 if(time == 0)
                 {
                     clearInterval(pid);

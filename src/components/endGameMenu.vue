@@ -16,6 +16,7 @@
 <script>
 import { toRef,ref } from '@vue/reactivity' 
 import { watch } from '@vue/runtime-core'
+import { inject } from 'vue'
 import button_wordgame from './button_wordgame.vue'
 export default {
     name : "wg_end_game_menu",
@@ -30,6 +31,7 @@ export default {
     setup(props)
     {       
         const rankingList = toRef(props, "WG_rankingList")
+        const backApp = inject("backApp")
         console.log(rankingList)
         const message = ref("Waiting players to finish...")
 
@@ -45,11 +47,13 @@ export default {
         const redirectLobby = ()=>
         {
             console.log("lobby")
+            backApp.sendRequest("")
         }
 
         const restart = ()=>
         {
-            console.log("restart")
+            console.log("restart");
+            backApp.sendRequest("restart");
         }
 
         watch(rankingList,updateRankingList)
