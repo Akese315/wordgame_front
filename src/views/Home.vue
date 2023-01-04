@@ -1,7 +1,7 @@
 <script>
-import WGinput from '../components/input_wordgame.vue'
-import WGbutton from '../components/button_wordgame.vue'
-import WGerror from '../components/error_wordgame.vue'
+import WGinput from '../components/input.vue'
+import WGbutton from '../components/button.vue'
+import WGerror from '../components/error.vue'
 import { inject} from 'vue'
 import { ref } from '@vue/reactivity';
 import { useRoute } from 'vue-router';
@@ -34,64 +34,52 @@ export default {
             setTimeout(() => {bounce.value = false;}, 1000); 
         }
 
-        const RejectError = (error)=>
-        {   
-            errorInput.value = error;
-            ErrorBounceAnimation();
-        }
-
-        const setGameHash =(response)=>
+        const createGameCallback =(response)=>
         {
-            errorInput.value = response.message;
-            game.playerList = response.playerList;            
-            game.gameHash = response.gameHash    
-            
-            ErrorBounceAnimation();
+            game.playerList = response.playerList;    
+            game.gameHash = response.gameHash;
+            game.isOwner = response.isOwner;
         }
 
-        const setPlayerList = (response)=>
+        const joinGameCallback = (response)=>
         {
-            game.setPlayerList(response.playerList)
+            game.isOwner = response.isOwner;
+            game.playerList = response.playerList;
         }
 
-        const createGame = (response)=>
-        { 
-            user.pseudo = response.pseudo;
-            localStorage.setItem("pseudo", user.pseudo)
-            errorInput.value = response.message;
-            ErrorBounceAnimation();
-            console.log(game.gameHash)
-            if(typeof(game.gameHash) === "undefined" )
-            {
-                console.log("creating game...")                
-                backApp.sendRequest("create",{userHash : user.hash}, setGameHash);            
+        const setGame = (response)=>
+        {
+            //create game
+            user.pseudo = response.pseudo; //set the pseudo got by the server
+            localStorage.setItem("pseudo", user.pseudo) //save the data in the localStorage
+            if(typeof(game.gameHash) != "undefined" )
+            {                
+                console.log("joining...")                
+                backApp.sendRequest("game:join",{userHash : user.hash, gameHash : game.gameHash},joinGameCallback);         
             }
             else
             {
-                console.log("joining...")                
-                backApp.sendRequest("join",{userHash : user.hash, gameHash : game.gameHash},setPlayerList)
+                console.log("creating game...")                
+                backApp.sendRequest("game:create",{userHash : user.hash}, createGameCallback);   
             }
         }        
 
-        const createUser = ()=>
+        const setPseudo = ()=>
         {   
             console.log("setting pseudo...")
-            backApp.sendRequest("setPseudo",{pseudo : pseudoInput.value, userHash : user.hash},
-            createGame)                   
+            backApp.sendRequest("player:pseudo",{pseudo : pseudoInput.value, userHash : user.hash},setGame)                   
         }        
 
         // -> les fonctions sont rangés par ordres d'utilisations
-        backApp.setErrorCallback(RejectError);
     
         return{
             pseudoInput,
             errorInput,
+            backApp,
             bounce,
             user,
             ErrorBounceAnimation,
-            createUser,
-            createGame,
-            setGameHash
+            setPseudo
         }
     }
 }
@@ -102,7 +90,7 @@ export default {
         <div id="main_card">
             <h1>Welcome to the KanjiYarou!</h1>
             <h2>ワードゲームへようこそ  </h2>     
-               <form @submit.prevent="createUser" >
+               <form @submit.prevent="setPseudo" >
                     <WGinput v-model="this.pseudoInput" wg_placeholder="Pseudo"/>                
                     <WGbutton wg_value ='Create'/>  
                     <WGerror v-bind:WG_value="this.errorInput" v-bind:Bounce="this.bounce"/>

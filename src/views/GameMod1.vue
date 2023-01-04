@@ -31,7 +31,11 @@ export default {
     },
     unmounted()
     {
-        this.backApp.closeEvents("answer");
+        this.backApp.closeEvents(this.backApp.ANSWER_GAME_EVENT);
+    },
+    mounted()
+    {
+        this.backApp.listen(this.backApp.ANSWER_GAME_EVENT,this.receiveAnswer)
     },
     setup(props)
     {         
@@ -41,15 +45,21 @@ export default {
         console.log(assignment)
         console.log("This is gamemod1")
 
-        const succeed = ()=>
+        const receiveAnswer = (data)=>
         {
-
+            if(data.answer)
+            {
+                console.log("true")
+            }else
+            {
+                console.log("false")
+            }
         }
 
         const sendAnswer = (card)=>
         {
             console.log(card)
-            backApp.sendRequest("answer", {answer :card},succeed)            
+            backApp.sendData(backApp.ANSWER_GAME_EVENT, {answer :card})            
         }
         
      
@@ -57,7 +67,8 @@ export default {
             cards,
             backApp,
             assignment, 
-            sendAnswer      
+            sendAnswer,
+            receiveAnswer   
         }
     }
 

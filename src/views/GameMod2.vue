@@ -12,7 +12,7 @@
 import { inject} from 'vue';
 import {ref} from 'vue';
 import WG_gameCard from '@/components/game_card.vue';
-import WG_panelError from '@/components/panel_error_wordgame.vue'
+import WG_panelError from '@/components/panel_error.vue'
 export default {
     name : "wg_game_mod_2",
     components:

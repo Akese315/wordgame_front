@@ -1,23 +1,40 @@
 <script>
-    import { toRef } from '@vue/reactivity';
+    import { toRef,ref } from '@vue/reactivity';
     export default ({
         name : "WG_player_view",
         props :
         {
             WG_pseudo : String,
             WG_point : Number,
-            WG_hasFinished : Boolean
+            WG_hasFinished : Boolean,
+            WG_icon : String
         },
         setup(props)
         {
             const pseudo = toRef(props, "WG_pseudo");
             const point = toRef(props, "WG_point");
+            const iconName = toRef(props,"WG_icon");
             const hasFinished = toRef(props, "WG_hasFinished");
+
+            const icon  = ref("");
+
+            const setIcon = ()=>
+            {
+                console.log(iconName.value)
+                icon.value = require("../assets/img/"+iconName.value+".png")                
+            }
+
             return{
                 pseudo,
+                icon,
                 point,
-                hasFinished
+                hasFinished,
+                setIcon
             }            
+        },
+        mounted()
+        {
+            this.setIcon();
         }
         
     })
@@ -25,7 +42,7 @@
 
 <template>
     <div id="player_view" class="defaultStyle" v-bind:class="{hasFinishedStyle : this.hasFinished}">
-        <img src="../assets/carpe_japonaise.jpg"/>
+        <img :src="this.icon"/>
         <p>{{this.pseudo}}</p>
         <p>{{this.point}}</p>
     </div>
@@ -42,16 +59,15 @@
     {
         display: flex;
         flex-direction: row;
-        height : 50px;
-        margin : 10px;
-        
+        height : 70px;
+        margin : 10px;        
         box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
         border-radius: 20px;
     }
     img
     {
         height: 100%;
-        border-radius: 40%;
+        border-radius: 30%;
     }
     p
     {

@@ -12,6 +12,7 @@ export default {
         Info_value :String,
         Error_value : String,
         card_value : String,
+        answer : Boolean,
         String_size : {
             default : "10em",
             type : String

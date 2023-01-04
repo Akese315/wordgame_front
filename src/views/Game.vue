@@ -3,7 +3,7 @@ import WG_player_list_container from '../components/player_list_container.vue'
 import wg_game_mod_1 from './GameMod1.vue'
 import wg_game_mod_2 from './GameMod2.vue'
 import wg_end_game_menu from '../components/endGameMenu.vue'
-import wg_startup from '../components/game_startup_kanjiyarou.vue'
+import wg_startup from '../components/game_startup.vue'
 import { inject,shallowRef} from 'vue';
 import { ref } from 'vue'
 
@@ -27,9 +27,12 @@ export default {
         const backApp = inject("backApp")
         const cards = ref(new Array)
         const assignment = ref("");
-        const round = ref(0)
+        const round = ref(0)        
         const startupTitle = ref("Starting...")
         var component = shallowRef("")
+        var timerPID = null;
+        const started = ref(false)
+        const timer = ref({seconds : 0, milliseconds : 0})
 
         component.value = wg_startup;
 
@@ -51,24 +54,75 @@ export default {
             }
         }        
 
-        const nextRound = (data)=>
+        const gameEventHandler = (data)=>
         {
             console.log(data)
+            if(typeof(data.event)!="undefined" && data.event == "start")
+            {               
+                start();
+            }
+            if(typeof(data.event)!="undefined" && data.event == "end")
+            {
+                endGame();
+            }
+        }
+
+        const updatePlayerList = (data)=>
+        {
+            game.playerList = data.playerList;
+        }
+
+        const timeReached = ()=>
+        {
+            console.log("time reached");
+            backApp.sendData(backApp.GAME_EVENT,{event : "timeout"})
+        }
+        const stopTimer =()=>
+        {
+            if(timerPID != null) clearInterval(timerPID);
+        }
+
+        const startTimer = ()=>
+        {
+            timer.value.seconds = game.timeout;
+            timerPID = setInterval(()=>
+            {
+                if(timer.value.milliseconds == 0)
+                {                    
+                    timer.value.seconds -=1;
+                    if(timer.value.seconds == 0)
+                    {
+                        timeReached();
+                        stopTimer();
+                        return;
+                    }
+                    timer.value.milliseconds =900;
+                }else
+                {
+                    timer.value.milliseconds -=100;
+                }            
+                
+                
+            },100)
+        }
+        
+        const nextRound = (data)=>
+        {
             cards.value = data.round.cards;
             assignment.value = data.round.assignment;
             round.value = data.round.round;
+            if(started.value)
+            {
+                stopTimer();
+                startTimer();
+            }           
         }
 
-        const start= (response)=>
-        {            
-           
-            nextRound(response)
-            if(response.hasStarted)
-            {
-                setGameMod(game.gameMod);
-                return;
-            }
-            let time = 3;
+       
+
+        const start= ()=>
+        {         
+            let time = 4;
             let pid = setInterval(()=>
             {
                 time--;
@@ -76,19 +130,14 @@ export default {
                 if(time == 0)
                 {
                     clearInterval(pid);
+                    console.log(game.gameMod)
                     setGameMod(game.gameMod)
+                    startTimer(); 
+                    started.value = true;
+                    console.log("start")
                 }
             },1000)
-        }
-
-        const setReady = ()=>
-        {
-            backApp.sendRequest("ready",{isReady : true},start);
-        }        
-        
-        backApp.setRoundCallback(nextRound)
-        backApp.setEndGameCallback(endGame);
-        setReady();
+        }          
 
         return{
             backApp,
@@ -98,8 +147,26 @@ export default {
             component,
             game,
             nextRound,
-            start
+            start,
+            endGame,
+            round,
+            gameEventHandler,
+            updatePlayerList,
+            timer
         }
+    },
+    mounted()
+    {
+        this.backApp.listen(this.backApp.ROUND_GAME_EVENT,this.nextRound);       
+        this.backApp.listen(this.backApp.PLAYER_LIST_EVENT, this.updatePlayerList);
+        this.backApp.listen(this.backApp.GAME_EVENT, this.gameEventHandler);
+        this.backApp.sendData(this.backApp.GAME_EVENT,{event : "ready"});
+    },
+    unmounted()
+    {
+        this.backApp.closeEvents(this.backApp.ROUND_GAME_EVENT);
+        this.backApp.closeEvents(this.backApp.PLAYER_LIST_EVENT);
+        this.backApp.closeEvents(this.backApp.GAME_EVENT);
     }
 }
 </script>
@@ -114,6 +181,12 @@ export default {
          v-bind:WG_rankingList="game.rankingList"
          v-bind:wg_time="startupTitle"
         ></component>
+        <div id="game_info">
+            <span id="seconds">{{ timer.seconds }} :</span>
+            <span id="milliseconds">{{ timer.milliseconds }}</span> 
+            <span id="round">#{{ round }}</span>
+        </div>
+        
    </div>
 </template>
 
@@ -128,5 +201,39 @@ export default {
     #background
     {   
         width : 100%;
+    }
+    #round
+    {
+        font-size: 60px;
+        color : #ffffff
+    }
+
+    #seconds
+    {
+        font-size: 60px;
+        color : #ffffff;
+        margin-right: 20px;
+        -webkit-text-size-adjust:none;
+    }
+
+    #milliseconds
+    {
+        font-size: 60px;
+        color : #ffffff;
+        margin-right: 20px;
+        -webkit-text-size-adjust:none;
+    }
+
+    
+
+    #game_info
+    {
+        position :absolute;
+        width : max-content;
+        z-index: 3;
+        padding : 5px;
+        margin : 5px;
+        right : 0px;
+        top : 0px
     }
 </style>

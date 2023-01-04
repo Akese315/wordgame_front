@@ -17,7 +17,7 @@
 import { toRef,ref } from '@vue/reactivity' 
 import { watch } from '@vue/runtime-core'
 import { inject } from 'vue'
-import button_wordgame from './button_wordgame.vue'
+import button_wordgame from './button.vue'
 export default {
     name : "wg_end_game_menu",
     components:

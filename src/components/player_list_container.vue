@@ -1,7 +1,6 @@
 <script>
     import WG_player_view from '../components/player_view.vue'
     import { toRef } from '@vue/reactivity';
-    import { inject} from 'vue';
     export default ({
         name : "WG_player_list_container",
         components :
@@ -19,22 +18,20 @@
         setup(props)
         {
             const playerList = toRef(props, "WG_player_list");
-            const ringAudio = inject("ringAudio")
+            const ringAudio = require("../assets/Water_Drop.mp3");
             const player = new Audio();
             player.src = ringAudio;
             
-
             const ring = ()=>
             {
                 player.play()
             }
 
-
             return{
                 player,
                 playerList,
                 ring
-            }
+           }
         },
         watch:
         {
@@ -42,8 +39,7 @@
             {
                this.ring()
             }
-        }
-    
+        }        
     })
 </script>
 
@@ -55,7 +51,8 @@
             v-bind:key="index" 
             v-bind:WG_pseudo="player.pseudo" 
             v-bind:WG_point="player.point"
-            v-bind:WG_hasFinished="player.hasFinished"/>
+            v-bind:WG_hasFinished="player.hasFinished"
+            v-bind:WG_icon="player.icon"/>
         </div>
     </div>
 </template>
