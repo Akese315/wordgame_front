@@ -32,6 +32,9 @@ export class BackApp
         }
         this.#wss = new io(API_URL,
         {
+            reconnection: true,
+            reconnectionDelay: 3000,
+            reconnectionAttempts: 10,
             path: "/socket",
             transports: ["websocket"],
             upgrade: true,
@@ -41,31 +44,29 @@ export class BackApp
         {
             callback(data);
         })
-        this.#wss.on("connect_error", (error) => {
-            ErrorCallback(error)
-          });
+        this.#wss.on("connect_error", () => {
+            ErrorCallback("Connnection error");
+        });
+        this.#wss.on("connect_failed", () => {
+            ErrorCallback("Connection failed");
+        });
         this.#wss.on("connect", () => {
-            this.connected()
+            this.connected();
           });
+        
+        this.#wss.on("reconnection_attempt",()=>
+        {
+            console.log("attempt to reconnect")
+        })
 
         this.#wss.on("disconnect", () => {
             console.log("disconnect event")
-            this.disconnected();
           });
 
         this.#wss.on("Notification",()=>
         {
 
         })
-
-        this.#wss.on("error",(error) =>
-        {
-            if(typeof(this.#errorCallback) != "undefined")
-            {
-                this.#errorCallback(error)
-            }
-        });
-
         this.isClose = false;
     }
 

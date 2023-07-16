@@ -5,6 +5,7 @@ import Home from './views/Home.vue'
 import Game from './views/Game.vue'
 import Lobby from './views/Lobby.vue'
 import Notfound from './views/Notfound.vue'
+// import VueMeta from 'vue-meta'
 
 
 
@@ -27,4 +28,5 @@ const app = createApp(App);
 app.config.unwrapInjectedRef = true;
 
 app.use(router);
-app.mount('#app')
+// app.use(VueMeta);
+app.mount('#app');

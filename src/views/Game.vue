@@ -87,23 +87,15 @@ export default {
             timer.value.seconds = game.timeout;
             timerPID = setInterval(()=>
             {
-                if(timer.value.milliseconds == 0)
-                {                    
-                    timer.value.seconds -=1;
-                    if(timer.value.seconds == 0)
-                    {
-                        timeReached();
-                        stopTimer();
-                        return;
-                    }
-                    timer.value.milliseconds =900;
-                }else
+                                 
+                timer.value.seconds -=1;
+                if(timer.value.seconds == 0)
                 {
-                    timer.value.milliseconds -=100;
-                }            
-                
-                
-            },100)
+                    timeReached();
+                    stopTimer();
+                    return;
+                }
+            },1000)
         }
         
         const nextRound = (data)=>
@@ -182,8 +174,7 @@ export default {
          v-bind:wg_time="startupTitle"
         ></component>
         <div id="game_info">
-            <span id="seconds">{{ timer.seconds }} :</span>
-            <span id="milliseconds">{{ timer.milliseconds }}</span> 
+            <span id="seconds">{{ timer.seconds }} : 0</span>
             <span id="round">#{{ round }}</span>
         </div>
         
@@ -198,9 +189,10 @@ export default {
         height : 100%;
         position:relative;
     }
+
     #background
-    {   
-        width : 100%;
+    {
+        width: 100%;
     }
     #round
     {

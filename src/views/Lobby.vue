@@ -37,7 +37,7 @@ export default {
         const url1 = ref(game1)
         const url2 = ref(game2) 
         const choices = ref([1,2,3,4,5])
-        const clickToCopy = ref("Copy the gameHash")
+        const clickToCopy = ref("Invite Link")
 
         var canSendNewRules = true;
         
@@ -58,7 +58,7 @@ export default {
             navigator.clipboard.writeText(clipboardCopy)
             clickToCopy.value = "Copied !"
             setTimeout(() => {
-                clickToCopy.value = "Copy the gameHash"
+                clickToCopy.value = "Invite Link"
             }, 2000);
         }
 
@@ -118,6 +118,7 @@ export default {
 
         const gameRulesUpdate = (data)=>
         {
+            console.log(data)
             if(typeof(data.JLPT_level) != "undefined")
             {
                 game.jlpt_level = data.JLPT_level;              
@@ -202,7 +203,7 @@ export default {
             <div v-if="game.isOwner" id="menu">
                 <span id="parameters_gamemod">
                     <button id="parameter_button" v-on:click="showParameters">Settings</button>
-                    <button id="gamemod_button" v-on:click="showGameMod">Game mod</button>
+                    <button id="gamemod_button" v-on:click="showGameMod">Game mode</button>
                 </span>
                 <div id="sub_menu" v-bind:style="{left : width}">
                     <form id="parameters" @submit.prevent="showGameMod">                
@@ -211,15 +212,15 @@ export default {
                         <p id="wordsNumber">Round number : {{this.rules.rounds = Math.round(parseInt(this.progressBarRound)*(this.maxRound)/100)}}</p>
                         <WGprogressBar v-model="this.progressBarTime"/>
                         <p id="wordsNumber">Timeout/round : {{this.rules.timeout = Math.round(parseInt(this.progressBarTime)*(this.maxTimeout)/100)}}</p>
-                        <WGbutton type="button" @clickWG="copyGameHash" v-bind:wg_value ="clickToCopy"/>
                         <WGbutton wg_value ='next'/>
+                        <WGbutton type="button" @clickWG="copyGameHash" :wg_value ="clickToCopy "/>
                     </form>
                     <form id="gamemod" @submit.prevent="launchGame">
                         <div id="listGameMod">
                             <WGbuttonImage  v-bind:image_url="url1" v-on:click="setGame('gameMod1')" game_name="Choice" background="1d323c" />
                             <WGbuttonImage  v-bind:image_url="url2" v-on:click="setGame('gameMod2')" game_name="Assembly" background="B0DAEF" />
                         </div>
-                        <WGbutton wg_value ='launch'/>
+                        <WGbutton wg_value ='Start'/>
                     </form>
                 </div>
             </div>
@@ -255,13 +256,16 @@ export default {
         overflow: hidden;
         box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;     
         align-items: center;   
+        align-content: center;
     }
 
     #menu
     {
         background: #FFFFFF;
-        width: 350px;
+        max-width: 350px;
+        width: 70%;
         height : max-content ;
+        max-height: 80%;
         display: flex;
         flex-direction: column;
         justify-content: center;  

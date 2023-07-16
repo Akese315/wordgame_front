@@ -1,6 +1,6 @@
 <template>
-    <span @click="this.clickEvent" class="cardDesign" v-bind:style="{fontSize : String_size }">
-        {{card_value}}
+    <span @click="this.clickEvent" class="cardDesign" >
+        <p v-bind:style="{fontSize : String_size }">{{card_value}}</p>
     </span>  
 </template>
 
@@ -14,7 +14,7 @@ export default {
         card_value : String,
         answer : Boolean,
         String_size : {
-            default : "10em",
+            default : "12vw",
             type : String
         }
         },
@@ -22,7 +22,7 @@ export default {
     setup(props, {emit})
     {
         const clickEvent = ()=>
-        {
+        { 
             emit('sendAnswer');
         }
 
@@ -38,13 +38,23 @@ export default {
     {
         background-color : white;
         border-radius: 15px;
-        margin : auto;
+        width: 80%;
+        margin : auto 3vw;
         user-select:none;
+       
         padding: 10px;
         cursor : pointer;
         box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
         transition : 0.5s;
     }
+
+    .cardDesign p 
+    {
+        margin : 0;
+        text-align: center;
+    }
+
+
 
     .cardDesign:hover
     {

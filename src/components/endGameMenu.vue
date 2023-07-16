@@ -7,7 +7,8 @@
         </div>
         <h2>{{this.message}}</h2>
         <div id="menu_button">
-            <button_wordgame @click="redirectLobby" wg_value="Lobby" /><button_wordgame @click="restart" wg_value="restart"/>
+            <button_wordgame @click="redirectLobby" wg_value="Lobby" />
+            <button_wordgame v-if="!game.isOwner" @click="restart" wg_value="restart"/>
         </div>
     </div>
   </div>
@@ -32,6 +33,7 @@ export default {
     {       
         const rankingList = toRef(props, "WG_rankingList")
         const backApp = inject("backApp")
+        const game = inject("game")
         console.log(rankingList)
         const message = ref("Waiting players to finish...")
 
@@ -62,7 +64,8 @@ export default {
             rankingList,
             message,
             redirectLobby,
-            restart
+            restart,
+            game
         }
     }
     

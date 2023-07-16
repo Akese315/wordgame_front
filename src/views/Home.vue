@@ -92,7 +92,7 @@ export default {
             <h2>ワードゲームへようこそ  </h2>     
                <form @submit.prevent="setPseudo" >
                     <WGinput v-model="this.pseudoInput" wg_placeholder="Pseudo"/>                
-                    <WGbutton wg_value ='Create'/>  
+                    <WGbutton wg_value ='Play'/>  
                     <WGerror v-bind:WG_value="this.errorInput" v-bind:Bounce="this.bounce"/>
                 </form>            
         </div>
@@ -105,7 +105,8 @@ export default {
     #main_card
     {     
         background-color: #f5f5f5;        
-        width: 500px;
+        width: 70%;
+        max-width: 500px;
         height : min-content;
         padding : 20px;
         border-radius:30px; 

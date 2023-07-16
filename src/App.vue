@@ -7,12 +7,17 @@ import { useRouter } from 'vue-router';
 import panel_error from './components/panel_error.vue';
 import { ref } from 'vue';
 
+
 export default 
 {
   name: 'App',
   components:
   {
     panel_error
+  },
+  metaInfo:
+  {
+    title: 'd'
   },
   setup()
   {
@@ -56,7 +61,6 @@ export default
     const errorCallback = (data)=>
     {
       error.value = data;
-      console.log(data)
       setTimeout(()=>
       {
         error.value = "";
@@ -90,11 +94,6 @@ export default
       }
     }
 
-    const openConnectionErrorCallback = (data)=>
-    {
-      console.error(data.errzor)
-    }
-
     return{
       user,
       error,
@@ -102,7 +101,6 @@ export default
       backApp,
       redirectCallback,
       openConnectionCallback,
-      openConnectionErrorCallback,
       errorCallback,
       infoCallback
     }
@@ -110,7 +108,7 @@ export default
 
   mounted()
   { 
-    this.backApp.openConnection({userHash: this.user.hash},this.openConnectionCallback,this.openConnectionErrorCallback);
+    this.backApp.openConnection({userHash: this.user.hash},this.openConnectionCallback,this.errorCallback);
     this.backApp.setRedirectCallback(this.redirectCallback);
     this.backApp.listen("redirect",this.redirectCallback);
     this.backApp.listen("error", this.errorCallback);

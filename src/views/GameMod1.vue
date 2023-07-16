@@ -81,23 +81,37 @@ export default {
     {   
         height : 100%;
         background-color : rgb(91, 91, 209);
-        display: flex;
+        display: flex;      
         flex-direction: column;
+        padding:  0 10px;
     }
 
     #gameplay
     {
-        height : 70%;
-        width : 60%;
+        height : 70%;   
+        max-width: 100%;
+        width : 100%;
+        /* overflow-x: scroll; */
         margin : 0 auto;
         display: flex;
+    }
+
+    @media (min-width:1100px)
+    {
+
+        #gameplay 
+        {
+            max-width: 80%;
+        }
+
     }
 
     h1
     {
         background: white ;
-        width : max-content;
+        overflow-wrap: normal;
         position :relative;
+        font-size : 30px;   
         margin : 0 auto;
         padding : 8px;
         border: 3px solid black;
