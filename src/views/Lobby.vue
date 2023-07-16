@@ -114,6 +114,7 @@ export default {
         const launchGame = ()=>
         {
             backApp.sendData(backApp.GAME_EVENT,{event: "launch"})
+            console.log("launch")
         }
 
         const gameRulesUpdate = (data)=>

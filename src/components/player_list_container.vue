@@ -1,6 +1,7 @@
 <script>
     import WG_player_view from '../components/player_view.vue'
     import { toRef,ref } from '@vue/reactivity';
+    import { inject } from 'vue'
     export default ({
         name : "WG_player_list_container",
         components :
@@ -19,6 +20,7 @@
         {
             const playerList = toRef(props, "WG_player_list");
             const ringAudio = require("../assets/Water_Drop.mp3");
+            const backApp = inject("backApp")
             const position = ref("100%");
             const AudioPlayer = new Audio();
 
@@ -29,6 +31,12 @@
             const ring = ()=>
             {
                 AudioPlayer.play()
+            }
+
+            const leaveRequest = ()=>
+            {
+                console.log("leave")
+                backApp.sendRequest('game:event', {"event" : "leave"})
             }
 
             const showContainer = ()=>
@@ -48,7 +56,8 @@
                 playerList,
                 ring,
                 position,
-                showContainer
+                showContainer,
+                leaveRequest
            }
         },
         watch:
@@ -72,7 +81,9 @@
                 v-bind:WG_point="player.point"
                 v-bind:WG_hasFinished="player.hasFinished"
                 v-bind:WG_icon="player.icon"/>
-            </div>            
+            </div>
+            <button id="leave-btn" @click="leaveRequest">Leave <img src="../assets/exit.svg"></button>
+            
         </div>  
         <span id="tag" @click="showContainer()">
             <svg  xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M8.122 24l-4.122-4 8-8-8-8 4.122-4 11.878 12z"/></svg>
@@ -86,11 +97,10 @@
 {
     width : 300px;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     background-color: #11222A;  
     transition: 1s;
     transition-property: none;
-    align-items: center;
     z-index: 5;
     transform: translateY(0%);
 }
@@ -125,6 +135,48 @@
     transform : rotate(90deg);
 }
 
+#leave-btn
+{
+    align-self: flex-end;
+    background-color: rgb(200,10,10);
+    width : max-content;
+    min-height: 40px;
+    height : min-content;
+    max-height: 1em;
+    font-size: 15px;
+    font-weight: bold;
+    color : #ffff;
+    border-radius : 10px;
+    margin :  0 auto;
+    position: relative;
+    bottom: 0;
+    cursor: pointer;
+    outline : none;
+    overflow-wrap: break-word;
+    border : 1px solid rgb(200,10,10);
+    display : block;
+}
+
+#leave-btn img
+{
+    position : relative;
+    vertical-align: middle;
+    margin : 3px;
+    height: 1em;
+    width: 1em;
+    filter: invert(87%) sepia(96%) saturate(16%) hue-rotate(238deg) brightness(105%) contrast(105%);
+}
+
+#leave-btn:hover
+{
+        background-color:#d23838 ;
+}
+
+#leave-btn:active
+{
+    background-color:#d23838 ;
+}
+
 
 @media (max-width:688px), screen and (orientation: portait)
 {
@@ -137,6 +189,7 @@
         transition-property: transform;
         border-bottom-left-radius: 20px;
         border-bottom-right-radius: 20px;
+        display: flex;
     }
     #tag
     {
@@ -148,6 +201,8 @@
         height : auto;
     }
 }
+
+
 
 @media (min-width:688px), screen and (orientation: landscape)
 {

@@ -72,6 +72,11 @@ export default {
             game.playerList = data.playerList;
         }
 
+        const updateRankingList = (data)=>
+        {
+            game.rankingList = data.rankingList;
+        }
+
         const timeReached = ()=>
         {
             console.log("time reached");
@@ -144,6 +149,7 @@ export default {
             round,
             gameEventHandler,
             updatePlayerList,
+            updateRankingList,
             timer
         }
     },
@@ -151,6 +157,7 @@ export default {
     {
         this.backApp.listen(this.backApp.ROUND_GAME_EVENT,this.nextRound);       
         this.backApp.listen(this.backApp.PLAYER_LIST_EVENT, this.updatePlayerList);
+        this.backApp.listen(this.backApp.PLAYER_RANKING_EVENT, this.updateRankingList)
         this.backApp.listen(this.backApp.GAME_EVENT, this.gameEventHandler);
         this.backApp.sendData(this.backApp.GAME_EVENT,{event : "ready"});
     },

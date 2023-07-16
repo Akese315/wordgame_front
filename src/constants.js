@@ -1,1 +1,1 @@
-export const API_URL = 'https://www.kanjiyarou.com';
+export const API_URL = 'http://localhost:3000';

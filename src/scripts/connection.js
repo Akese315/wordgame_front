@@ -18,6 +18,7 @@ export class BackApp
     GAME_EVENT = "game:event";
     ANSWER_GAME_EVENT = "game:answer"
     PLAYER_LIST_EVENT = "game:playerList"
+    PLAYER_RANKING_EVENT = "game:rankingList"
 
     constructor(game)
     {
@@ -146,6 +147,10 @@ export class BackApp
     setRedirectCallback(callback)
     {
         this.#redirectCallback = callback;
+    }
+
+    goTo(path){
+        this.#redirectCallback(path)
     }
 }
         

@@ -34,7 +34,6 @@ export default {
         const rankingList = toRef(props, "WG_rankingList")
         const backApp = inject("backApp")
         const game = inject("game")
-        console.log(rankingList)
         const message = ref("Waiting players to finish...")
 
         if(rankingList.value.length >0)
@@ -49,7 +48,7 @@ export default {
         const redirectLobby = ()=>
         {
             console.log("lobby")
-            backApp.sendRequest("")
+            backApp.goTo("lobby")
         }
 
         const restart = ()=>
