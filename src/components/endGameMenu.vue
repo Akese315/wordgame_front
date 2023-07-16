@@ -8,7 +8,7 @@
         <h2>{{this.message}}</h2>
         <div id="menu_button">
             <button_wordgame @click="redirectLobby" wg_value="Lobby" />
-            <button_wordgame v-if="!game.isOwner" @click="restart" wg_value="restart"/>
+            <button_wordgame v-if="game.isOwner" @click="restart" wg_value="restart"/>
         </div>
     </div>
   </div>
