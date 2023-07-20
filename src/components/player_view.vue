@@ -20,7 +20,6 @@
 
             const setIcon = ()=>
             {
-                console.log(iconName.value)
                 icon.value = require("../assets/img/"+iconName.value+".png")                
             }
 

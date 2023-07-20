@@ -42,9 +42,7 @@ export default {
         const cards = toRef(props, "card_array");
         const assignment = toRef(props,"assignment_string");
         const backApp = inject("backApp")
-        console.log(assignment)
-        console.log("This is gamemod1")
-
+      
         const receiveAnswer = (data)=>
         {
             if(data.answer)
@@ -58,7 +56,6 @@ export default {
 
         const sendAnswer = (card)=>
         {
-            console.log(card)
             backApp.sendData(backApp.ANSWER_GAME_EVENT, {answer :card})            
         }
         

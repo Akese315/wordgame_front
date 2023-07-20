@@ -1,7 +1,7 @@
 <script>
     import WG_player_view from '../components/player_view.vue'
     import { toRef,ref } from '@vue/reactivity';
-    import { inject } from 'vue'
+    import { inject, watch } from 'vue'
     export default ({
         name : "WG_player_list_container",
         components :
@@ -52,6 +52,23 @@
                 }
             }
 
+            watch( 
+                playerList,
+                (newValue, oldValue )=>{
+                    for(var i = 0; i<newValue.length; i++)
+                    {
+                        if(newValue[i].point != oldValue[i].point)
+                        {
+                            ring()
+                            break;
+                        }
+                    }
+                },
+                { deep: true }
+            )
+
+           
+
             return{
                 playerList,
                 ring,
@@ -59,14 +76,7 @@
                 showContainer,
                 leaveRequest
            }
-        },
-        watch:
-        {
-            playerList()
-            {
-               this.ring()
-            }
-        }        
+        }  
     })
 </script>
 
@@ -125,6 +135,8 @@
     position : relative;    
     top : 20px;
     cursor: pointer;
+    margin : 0 auto;
+    width: min-content;
     align-self:auto;
     align-items: center;
     display: none;
@@ -143,13 +155,12 @@
     min-height: 40px;
     height : min-content;
     max-height: 1em;
-    font-size: 15px;
+    font-size: 25px;
     font-weight: bold;
     color : #ffff;
     border-radius : 10px;
-    margin :  0 auto;
+    margin :  20px auto;
     position: relative;
-    bottom: 0;
     cursor: pointer;
     outline : none;
     overflow-wrap: break-word;

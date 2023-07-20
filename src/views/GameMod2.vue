@@ -11,6 +11,7 @@
 <script>
 import { inject} from 'vue';
 import {ref} from 'vue';
+import { toRef } from '@vue/runtime-core';
 import WG_gameCard from '@/components/game_card.vue';
 import WG_panelError from '@/components/panel_error.vue'
 export default {
@@ -20,16 +21,41 @@ export default {
         WG_gameCard,
         WG_panelError
     },
-    setup()
+    props:
+    {
+        card_array: 
+        {
+            type: [Array, Object],
+        },
+
+        assignment_string:
+        {
+            type: [String]
+        }
+    },
+    setup(props)
     {
         const backApp = inject("backApp"); 
-        const cards = ref(new Array);
+        const cards = toRef(props, "card_array");
+        const assignment = toRef(props,"assignment_string");
         const errorValue = ref("");
         const infoValue = ref("");
-        const assignment = ref("");
       
-
+        const sendAnswer = (card)=>
+        {
+            backApp.sendData(backApp.ANSWER_GAME_EVENT, {answer :card})            
+        }
         
+        const receiveAnswer = (data)=>
+        {
+            if(data.answer)
+            {
+                console.log("true")
+            }else
+            {
+                console.log("false")
+            }
+        }
       
       
         
@@ -38,10 +64,21 @@ export default {
             assignment,
             cards,
             errorValue,
-            infoValue
+            infoValue,
+            sendAnswer,
+            receiveAnswer
         }
-    }
+        
+    },
 
+    unmounted()
+    {
+        this.backApp.closeEvents(this.backApp.ANSWER_GAME_EVENT);
+    },
+    mounted()
+    {
+        this.backApp.listen(this.backApp.ANSWER_GAME_EVENT,this.receiveAnswer)
+    }
 }
 </script>
 
@@ -52,28 +89,40 @@ export default {
         background-color : rgb(146, 209, 91);
         display: flex;
         flex-direction: column;
+        padding:  0 10px;
     }
 
     #gameplay
     {
-        height : 70%;
-        width : 60%;
+        height : 70%;   
+        max-width: 100%;
+        width : 100%;
+        /* overflow-x: scroll; */
         margin : 0 auto;
-        display: grid;
-        grid-template-rows: 1fr 1fr;
-        grid-template-columns: 1fr 1fr 1fr;
+        display: flex;
         
     }
 
     h1
     {
         background: white ;
-        width : max-content;
+        overflow-wrap: normal;
         position :relative;
+        font-size : 30px;   
         margin : 0 auto;
         padding : 8px;
         border: 3px solid black;
         text-align: center;
+    }
+
+    @media (min-width:1100px)
+    {
+
+        #gameplay 
+        {
+            max-width: 70%;
+        }
+
     }
 
 </style>

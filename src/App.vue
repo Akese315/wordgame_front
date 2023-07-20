@@ -79,17 +79,17 @@ export default
     {
       switch(redirect)
       {
-        case "game" :
+        case "/game" :
           console.log("joined the game")
-          router.push({ path: "/game"});
+          router.push({ path: redirect });
           break;
-        case "home" :
+        case "/home" :
           console.log("welcome :)")  
           router.push({ path: '/'});
           break;
-        case "lobby" :
+        case "/lobby" :
           console.log("joined the lobby")  
-          router.push({ path: "/lobby"});
+          router.push({ path: redirect});
           break;
       }
     }
@@ -120,7 +120,7 @@ export default
 
 <template>
   <panel_error v-bind:errorProp="error"/>
-  <router-view/> 
+  <router-view /> 
 </template>
 
 

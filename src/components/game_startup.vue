@@ -5,7 +5,10 @@ export default {
   name:"gameStartup",
   props:
   {
-    wg_time : String
+    wg_time : {
+      type: String,
+      default: "3"
+    } 
   },
   startup()
   {

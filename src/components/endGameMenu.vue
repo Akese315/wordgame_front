@@ -47,14 +47,12 @@ export default {
 
         const redirectLobby = ()=>
         {
-            console.log("lobby")
-            backApp.goTo("lobby")
+            backApp.goTo("/lobby")
         }
 
         const restart = ()=>
         {
-            console.log("restart");
-            backApp.sendRequest("restart");
+            backApp.sendRequest(backApp.GAME_EVENT,{"event":"restart"});
         }
 
         watch(rankingList,updateRankingList)

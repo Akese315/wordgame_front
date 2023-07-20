@@ -38,7 +38,6 @@ export default {
 
         const endGame =()=>
         {
-            console.log("game ended")
             component.value = wg_end_game_menu;
         }
 
@@ -48,23 +47,35 @@ export default {
             {
                 component.value = wg_game_mod_1
             }
-            if(gameMod == "gameMod2")
+            if(gameMod == "gameMod3")
             {
                 component.value = wg_game_mod_2
+            }
+            if(gameMod == "startup")
+            {
+                component.value =wg_startup;
             }
         }        
 
         const gameEventHandler = (data)=>
         {
-            console.log(data)
-            if(typeof(data.event)!="undefined" && data.event == "start")
-            {               
-                start();
-            }
-            if(typeof(data.event)!="undefined" && data.event == "end")
+            if(typeof(data.event)!="undefined" )
             {
-                endGame();
+                if(data.event == "start")
+                {               
+                    start();
+                }
+                if(data.event == "end")
+                {
+                    endGame();
+                }
+                if(data.event =="restart")
+                {
+                    restart();
+                }
             }
+            
+            
         }
 
         const updatePlayerList = (data)=>
@@ -79,7 +90,6 @@ export default {
 
         const timeReached = ()=>
         {
-            console.log("time reached");
             backApp.sendData(backApp.GAME_EVENT,{event : "timeout"})
         }
         const stopTimer =()=>
@@ -127,14 +137,21 @@ export default {
                 if(time == 0)
                 {
                     clearInterval(pid);
-                    console.log(game.gameMod)
                     setGameMod(game.gameMod)
+                    startupTitle.value = "Starting...";
                     startTimer(); 
                     started.value = true;
-                    console.log("start")
                 }
             },1000)
-        }          
+        }       
+        
+        const restart = ()=>
+        {
+            setGameMod("startup")
+            console.log("restart callback")
+            backApp.sendData(backApp.GAME_EVENT,{event : "ready"});
+            console.log("restart callback after")
+        }
 
         return{
             backApp,
@@ -145,6 +162,7 @@ export default {
             game,
             nextRound,
             start,
+            restart,
             endGame,
             round,
             gameEventHandler,

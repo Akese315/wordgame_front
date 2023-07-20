@@ -119,7 +119,6 @@ export default {
 
         const gameRulesUpdate = (data)=>
         {
-            console.log(data)
             if(typeof(data.JLPT_level) != "undefined")
             {
                 game.jlpt_level = data.JLPT_level;              
@@ -219,7 +218,7 @@ export default {
                     <form id="gamemod" @submit.prevent="launchGame">
                         <div id="listGameMod">
                             <WGbuttonImage  v-bind:image_url="url1" v-on:click="setGame('gameMod1')" game_name="Choice" background="1d323c" />
-                            <WGbuttonImage  v-bind:image_url="url2" v-on:click="setGame('gameMod2')" game_name="Assembly" background="B0DAEF" />
+                            <WGbuttonImage  v-bind:image_url="url2" v-on:click="setGame('gameMod3')" game_name="Assembly" background="B0DAEF" />
                         </div>
                         <WGbutton wg_value ='Start'/>
                     </form>
